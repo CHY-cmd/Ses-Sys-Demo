@@ -8,6 +8,7 @@ import store from '@/store';
 
 
 const routes = [
+  { path: '/', redirect: '/Login' },
   {
     path: '/CustInfoList',
     name: 'CustInfoList',
