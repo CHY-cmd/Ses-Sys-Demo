@@ -60,7 +60,7 @@
     CUST_NOMINEE, CUST_CRD_USR, CUST_CRD_DT, CUST_UPD_USR, CUST_UPD_DT
   </sql>
   
-  <!--逻辑删除-->
+  
   <select id="selectByCustID" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

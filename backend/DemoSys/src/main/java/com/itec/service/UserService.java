@@ -10,8 +10,10 @@ import com.itec.pojo.vo.UserQuaryCondition;
 public interface UserService {
 	R login(LoginUser loginUser);
 
-	R selectUserInfo(UserQuaryCondition userQuaryCondition);
+	R selectUserInfo(Integer currentPage, Integer limit, UserQuaryCondition userQuaryCondition);
 
 	R selectUserInfoByMail(String token);
+
+	R deleteUserById(String userId);
 
 }

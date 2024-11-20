@@ -19,7 +19,7 @@ export default createStore({
       state.snackbar = { ...state.snackbar, ...payload };
     },
     setUsername(state, username) {
-      state.username = username;
+      state.username = username; //后端返回的username
     },
     login(state) {
       state.isLoggedIn = true;

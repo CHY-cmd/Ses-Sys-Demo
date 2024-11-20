@@ -1,7 +1,7 @@
 <template>
-    <v-app>
-        <navigation-drawer>
-            <div style="background-color:rgb(217, 217, 217) ;">
+    <v-app >
+        <navigation-drawer style="height: 100%;display: flex;">
+            <div style="background-color:rgb(217, 217, 217) ;display: flex; flex-direction: column; height: 100%;">
                 <div style="margin-top: 0px;padding-top: 0px;">
                     <v-app-bar :elevation="1" style="background-color: rgb(0, 114, 159);height: 64px">
                         <v-app-bar-title style="font-size: 30px;color: aliceblue" class="d-flex align-center">取引先情報一覧
@@ -59,8 +59,8 @@
                 </div>
 
                 <!-- 表格部分 -->
-                <div style="background-color: rgb(242, 242, 242); ;margin-top: 0px;">
-                    <v-table class="custom-table">
+                <div style="background-color: rgb(242, 242, 242); ;margin-top: 0px;height: 100%;display: flex;">
+                    <v-table style="width: 100%;height: 100%;">
                         <thead>
                             <tr class="thead">
                                 <th class="text-right" style="width: 120px;">
@@ -138,7 +138,7 @@ import Pagination from '@/components/Pagination.vue';
 import NavigationDrawer from "@/components/NavigationDrawer.vue";
 
 export default {
-    name: 'CustomerInfoList',
+    name: 'CustInfoList',
 
     components: {
         Pagination,

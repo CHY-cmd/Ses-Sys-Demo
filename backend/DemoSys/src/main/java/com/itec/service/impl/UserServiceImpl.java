@@ -1,6 +1,7 @@
 package com.itec.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,9 +49,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public R selectUserInfo(UserQuaryCondition userQuaryCondition) {
-		// TODO Auto-generated method stub
-		return null;
+	public R selectUserInfo(Integer currentPage, Integer limit, UserQuaryCondition userQuaryCondition) {
+		Integer startIndex = (currentPage - 1) * limit;
+		List<User> selectUserInfo = userMapper.selectUserInfo(startIndex, limit, userQuaryCondition);
+		Integer selectUserNum = userMapper.selectUserNum(userQuaryCondition);
+		if (selectUserNum > 0) {
+			return R.success().data("items", selectUserInfo).data("itemsNum", selectUserNum);
+		} else {
+			return R.success().message("検索結果は0件です").data("itemsNum", selectUserNum);
+		}
 	}
 
 	@Override
@@ -63,6 +70,16 @@ public class UserServiceImpl implements UserService {
 		User selectUserInfoByMail = userMapper.selectUserInfoByMail(userMailaddress);
 
 		return R.success().data("mail", selectUserInfoByMail.getUserMailaddress());
+	}
+
+	@Override
+	public R deleteUserById(String userId) {
+		int i = userMapper.deleteUserById(userId);
+		if (i > 0) {
+			return R.success().message("削除が完了しました");
+		} else {
+			return R.success().message("削除に失敗しました");
+		}
 	}
 
 }

@@ -44,6 +44,7 @@ public class CustInfoController {
 
 	// 逻辑删除客户
 	@DeleteMapping("/deleteCustByID/{custId}")
+	@Transactional
 	public R deleteCustByID(@PathVariable("custId") String custId) {
 		return custInfoServiceImpl.deleteCustByID(custId);
 	};

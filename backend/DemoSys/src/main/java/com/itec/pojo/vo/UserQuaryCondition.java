@@ -7,6 +7,7 @@ public class UserQuaryCondition {
 	private String userNm;
 	private Byte userRole;
 	private String userMailaddress;
+	private String userLockFlg;
 
 	public String getUserNm() {
 		return userNm;
@@ -41,6 +42,22 @@ public class UserQuaryCondition {
 
 	public UserQuaryCondition() {
 		super();
+	}
+
+	public String getUserLockFlg() {
+		return userLockFlg;
+	}
+
+	public void setUserLockFlg(String userLockFlg) {
+		this.userLockFlg = userLockFlg;
+	}
+
+	public UserQuaryCondition(String userNm, Byte userRole, String userMailaddress, String userLockFlg) {
+		super();
+		this.userNm = userNm;
+		this.userRole = userRole;
+		this.userMailaddress = userMailaddress;
+		this.userLockFlg = userLockFlg;
 	}
 
 }

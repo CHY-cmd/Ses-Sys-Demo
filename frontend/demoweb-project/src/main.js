@@ -15,3 +15,8 @@ if (token) {
 }
 app.use(router).use(store).use(vuetify).mount("#app");
 
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title || 'ITEC社内総合管理'; 
+  next();
+});
+

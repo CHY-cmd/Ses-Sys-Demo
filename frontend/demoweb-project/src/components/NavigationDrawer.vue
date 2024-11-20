@@ -169,7 +169,7 @@ export default {
           this.$router.push({ name: '' });
           break;
         case 'user1':
-          this.$router.push({ name: '' });
+          this.$router.push({ name: 'UserList' });
           break;
         case 'user2':
           this.$router.push({ name: '' });

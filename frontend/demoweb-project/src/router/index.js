@@ -5,7 +5,7 @@ import CustInfoAdd from '../views/CustInfoAdd.vue'
 import CustInfoDetail from '../views/CustInfoDetail.vue'
 import Login from '../views/Login.vue'
 import store from '@/store';
-
+import UserList from '../views/UserList.vue'
 
 const routes = [
   { path: '/', redirect: '/Login' },
@@ -13,32 +13,39 @@ const routes = [
     path: '/CustInfoList',
     name: 'CustInfoList',
     component: CustInfoList,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '基本情報—取引先情報一覧'  }
   },
   {
     path: '/CustInfoAdd',
     name: 'CustInfoAdd',
     component: CustInfoAdd,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '基本情報—取引先情報'  }
   },
   {
     path: '/CustInfoAdd/:custId',
     name: 'CustInfoEdit',
     component: CustInfoAdd,
     hidden:true,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '基本情報—取引先情報詳細'  }
   },
   {
     path: '/CustInfoDetail/:custId',
     name: 'CustInfoDetail',
     component: CustInfoDetail,
     hidden:true,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '基本情報—取引先情報詳細'  }
   },
   {
     path: '/Login',
     name: 'Login',
-    component: Login
+    component: Login,
+    meta: { title: 'ITEC社内総合管理' }
+  },
+  {
+    path: '/UserList',
+    name: 'UserList',
+    component: UserList,
+    meta: { requiresAuth: true, title: 'ユーザー管理—ユーザー情報管理'  }
   },
 ]
 const router = createRouter({
