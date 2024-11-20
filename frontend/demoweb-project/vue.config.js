@@ -8,8 +8,5 @@ module.exports = defineConfig({
 		}
   },
 
-    publicPath: process.env.NODE_ENV === 'production'
-      ? '/Ses-Sys-Demo/frontend/demoweb-project/'
-      : '/'
 
 })
