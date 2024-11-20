@@ -8,9 +8,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "predeploy": "npm run build",
-    "deploy": "vercel"
+    "deploy": "gh-pages -d dist"
   },
-  
   "dependencies": {
     "@mdi/font": "^5.9.55",
     "axios": "^1.7.7",
