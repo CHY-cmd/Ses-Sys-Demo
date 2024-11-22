@@ -24,4 +24,6 @@ public interface UserService {
 	R updateUserByUserId(User user);
 
 	R updatePwdByUserId(User user);
+
+	R updateUserLockFlg(String userMailaddress);
 }

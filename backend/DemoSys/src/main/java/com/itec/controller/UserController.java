@@ -82,4 +82,11 @@ public class UserController {
 	public R updatePwdByUserId(@RequestBody User user) {
 		return userService.updatePwdByUserId(user);
 	}
+
+	// 锁定账户
+	@Transactional
+	@PutMapping("/updateUserLockFlg")
+	public R updateUserLockFlg(@RequestParam("userMailaddress") String userMailaddress) {
+		return userService.updateUserLockFlg(userMailaddress);
+	}
 }

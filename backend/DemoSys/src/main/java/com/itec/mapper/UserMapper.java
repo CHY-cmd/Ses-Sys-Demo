@@ -46,4 +46,8 @@ public interface UserMapper {
 	// 修改密码
 	@Update("update user_tbl set USER_PWD=#{userPwd},USER_EX_PW_DAY = #{userExPwDay},MANAGER_UPD_USR = #{managerUpdUsr},MANAGER_UPD_DT = #{managerUpdDt} where USER_ID =#{userId}  and USER_DEL_FLG=0")
 	int updatePwdByUserId(User user);
+
+	// 锁定账户
+	@Update("update user_tbl set USER_LOCK_FLG = 1 where USER_MAILADDRESS =#{userMailaddress} and USER_DEL_FLG=0")
+	int updateUserLockFlg(String userMailaddress);
 }

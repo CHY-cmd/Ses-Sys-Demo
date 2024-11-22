@@ -1,7 +1,10 @@
 package com.itec.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	UserMapper userMapper;
 
+	private Map<String, LoginAttempt> loginAttempts = new HashMap<>();
+
 	@Override
 	public R login(LoginUser loginUser) {
 		// 用户名密码为空时直接返回失败
@@ -32,10 +37,31 @@ public class UserServiceImpl implements UserService {
 		// 密码MD5加密
 		Md5Util.string2MD5(loginUser.getUserPwd());
 
+		// 检查登录尝试次数
+		String username = loginUser.getUserMailaddress();
+		LoginAttempt attempt = loginAttempts.get(username);
+		if (attempt != null && attempt.getFailedAttempts() >= 3
+				&& System.currentTimeMillis() - attempt.getLastAttemptTime() < TimeUnit.MINUTES.toMillis(1)) {
+			userMapper.updateUserLockFlg(username);
+			return R.error().message("アカウントがロックされています。管理者に連絡してください。");
+		}
+
 		// 使用用户名密码登录
 		User user = userMapper.login(loginUser.getUserMailaddress(), loginUser.getUserPwd());
 		if (user == null) {
+			// 更新登录尝试次数
+			if (attempt == null) {
+				attempt = new LoginAttempt();
+				loginAttempts.put(username, attempt);
+			}
+			attempt.incrementFailedAttempts();
+			attempt.setLastAttemptTime(System.currentTimeMillis());
 			return R.error().message("ユーザー名またはパスワードが間違っています");
+		}
+
+		// 重置登录尝试次数
+		if (attempt != null) {
+			attempt.resetFailedAttempts();
 		}
 
 		// 判断用户的密码过期
@@ -52,6 +78,31 @@ public class UserServiceImpl implements UserService {
 
 		String token = JwtUtil.getJWTToken(loginUser.getUserMailaddress(), loginUser.getUserPwd());
 		return R.success().data("token", token).data("username", loginUser.getUserNm());
+	}
+
+	private static class LoginAttempt {
+		private int failedAttempts = 0;
+		private long lastAttemptTime = 0;
+
+		public void incrementFailedAttempts() {
+			failedAttempts++;
+		}
+
+		public void resetFailedAttempts() {
+			failedAttempts = 0;
+		}
+
+		public int getFailedAttempts() {
+			return failedAttempts;
+		}
+
+		public void setLastAttemptTime(long lastAttemptTime) {
+			this.lastAttemptTime = lastAttemptTime;
+		}
+
+		public long getLastAttemptTime() {
+			return lastAttemptTime;
+		}
 	}
 
 	@Override
@@ -131,6 +182,16 @@ public class UserServiceImpl implements UserService {
 			return R.success().message("変更成功");
 		} else {
 			return R.error().message("変更エラー");
+		}
+	}
+
+	@Override
+	public R updateUserLockFlg(String userMailaddress) {
+		int i = userMapper.updateUserLockFlg(userMailaddress);
+		if (i > 0) {
+			return R.success().message("アカウントがロックされています。管理者に連絡してください。");
+		} else {
+			return R.error().message("ロックエラー");
 		}
 	}
 

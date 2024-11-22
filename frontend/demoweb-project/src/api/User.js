@@ -93,4 +93,14 @@ export default {
       ...getAuthConfig(),
     });
   },
+
+  //锁定账户
+  updateUserLockFlg(userMailaddress) {
+    return request({
+      url: `${BASE_URL}/user/updateUserLockFlg`,
+      method: "put",
+      params: userMailaddress,
+      ...getAuthConfig(),
+    });
+  },
 };

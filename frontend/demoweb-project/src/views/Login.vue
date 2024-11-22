@@ -70,7 +70,9 @@ export default {
             passwordRules: [
                 v => !!v || 'パスワードは必須です',
                 v => /^(?=.*[A-Za-z0-9]).{8,}$/.test(v) || '「バスワード」は英数字「8」文字以上にしてください'
-            ]
+            ],
+            loginAttempts: 0,
+            lockTime: 60 * 1000,
         }
     },
     computed: {
