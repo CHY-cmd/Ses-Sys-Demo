@@ -580,8 +580,8 @@ export default {
         'custMangRequest.mangInfo': {
             handler(newVal) {
                 newVal.forEach(row => {
-                    row.managerCrdUsr = 'USER';
-                    row.managerUpdUsr = 'USER';
+                    row.managerCrdUsr = this.$store.state.username;
+                    row.managerUpdUsr = this.$store.state.username;
                 });
             },
             deep: true

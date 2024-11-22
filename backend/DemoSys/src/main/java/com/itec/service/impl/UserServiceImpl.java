@@ -13,6 +13,7 @@ import com.itec.pojo.vo.LoginUser;
 import com.itec.pojo.vo.R;
 import com.itec.pojo.vo.UserQuaryCondition;
 import com.itec.service.UserService;
+import com.itec.util.IDUtil;
 import com.itec.util.JwtUtil;
 import com.itec.util.Md5Util;
 
@@ -38,14 +39,19 @@ public class UserServiceImpl implements UserService {
 		}
 
 		// 判断用户的密码过期
-		Date userExPwDay = user.getUserExPwDay();
+		Date userPwExpiration = user.getUserPwExpiration();
 		Date now = new Date();
-		if (userExPwDay != null && now.after(userExPwDay)) {
+		if (userPwExpiration != null && now.after(userPwExpiration)) {
 			return R.error().message("パスワードが期限切れです。新しいパスワードを設定してください");
 		}
 
+		String userLockFlg = user.getUserLockFlg();
+		if (!"0".equals(userLockFlg)) {
+			return R.error().message("アカウントがロックされています。管理者に連絡してください");
+		}
+
 		String token = JwtUtil.getJWTToken(loginUser.getUserMailaddress(), loginUser.getUserPwd());
-		return R.success().data("token", token).data("username", loginUser.getUserMailaddress());
+		return R.success().data("token", token).data("username", loginUser.getUserNm());
 	}
 
 	@Override
@@ -69,7 +75,7 @@ public class UserServiceImpl implements UserService {
 		String userMailaddress = JwtUtil.getUsernameByToken(token);
 		User selectUserInfoByMail = userMapper.selectUserInfoByMail(userMailaddress);
 
-		return R.success().data("mail", selectUserInfoByMail.getUserMailaddress());
+		return R.success().data("username", selectUserInfoByMail.getUserNm());
 	}
 
 	@Override
@@ -79,6 +85,52 @@ public class UserServiceImpl implements UserService {
 			return R.success().message("削除が完了しました");
 		} else {
 			return R.success().message("削除に失敗しました");
+		}
+	}
+
+	@Override
+	public R insertUser(User user) {
+		String userId = IDUtil.getID();
+		user.setUserId(userId);
+		user.setUserDelFlg("0");
+		user.setUserLockFlg("0");
+		user.setManagerCrdDt(new Date());
+		user.setManagerUpdDt(new Date());
+		user.setUserExPwDay(new Date());
+		int i = userMapper.insertUser(user);
+		if (i > 0) {
+			return R.success().message("登録成功");
+		} else {
+			return R.error().message("登録エラー");
+		}
+	}
+
+	@Override
+	public R updateUserByUserId(User user) {
+		user.setManagerUpdDt(new Date());
+		int i = userMapper.updateUserByUserId(user);
+		if (i > 0) {
+			return R.success().message("更新成功");
+		} else {
+			return R.error().message("更新エラー");
+		}
+	}
+
+	@Override
+	public R selectUserById(String userId) {
+		User selectUserById = userMapper.selectUserById(userId);
+		return R.success().data("items", selectUserById);
+	}
+
+	@Override
+	public R updatePwdByUserId(User user) {
+		user.setManagerUpdDt(new Date());
+		user.setUserExPwDay(new Date());
+		int i = userMapper.updatePwdByUserId(user);
+		if (i > 0) {
+			return R.success().message("変更成功");
+		} else {
+			return R.error().message("変更エラー");
 		}
 	}
 

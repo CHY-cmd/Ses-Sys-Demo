@@ -36,7 +36,7 @@
 </template>
 <script>
 import userApi from '@/api/User.js';
-import { setToken } from '@/utils/auth';
+import { setToken,getToken } from '@/utils/auth';
 
 export default {
     name: 'Login',
@@ -49,6 +49,7 @@ export default {
     data() {
         return {
             valid: true,
+            token: '',
             loginForm: {
                 userMailaddress: '',
                 userPwd: ''
@@ -82,23 +83,26 @@ export default {
 
     },
     methods: {
-        handleLogin() {
+        async handleLogin() {
             if (this.$refs.loginForm.validate()) {
-                userApi.login(this.loginForm)
-                    .then(response => {
-                        this.username = response.data.username;
-                        this.$store.commit('setUsername', this.username);//存储用户名
-                        this.$store.commit('login');//标记已登录
-                        const token = response.data.token;
-                        setToken(token);
-                        this.$router.push({ path: this.redirect || '/CustInfoList' });
-                    })
-                    .catch((err) => {
-                        this.snackbar.show = true;
-                        this.snackbar.color = 'error';
-                        this.snackbar.message = err.message || 'ログインに失敗しました';
-                        console.error('Error:', err);
-                    });
+                try {
+                    const response = await userApi.login(this.loginForm);
+                    this.$store.commit('login'); // 标记已登录
+                    const token = response.data.token;
+                    setToken(token);
+
+                    // 获取用户信息
+                    const storedToken = getToken();
+                    const userInfoResponse = await userApi.getInfo(storedToken);
+                    this.username = userInfoResponse.data.username;
+                    this.$store.commit('setUsername', this.username); // 存储用户名
+                    this.$router.push({ path: this.redirect || '/CustInfoList' });
+                } catch (err) {
+                    this.snackbar.show = true;
+                    this.snackbar.color = 'error';
+                    this.snackbar.message = err.message || 'ログインに失敗しました';
+                    console.error('Error:', err);
+                }
             } else {
                 console.log('error submit');
             }

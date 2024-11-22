@@ -9,6 +9,7 @@ public class LoginUser {
 	private String userPwd;
 	private String userMailaddress;
 	private Date userExPwDay;
+	private String userNm;
 
 	public String getUserPwd() {
 		return userPwd;
@@ -42,6 +43,14 @@ public class LoginUser {
 
 	public void setUserExPwDay(Date userExPwDay) {
 		this.userExPwDay = userExPwDay;
+	}
+
+	public String getUserNm() {
+		return userNm;
+	}
+
+	public void setUserNm(String userNm) {
+		this.userNm = userNm;
 	}
 
 }

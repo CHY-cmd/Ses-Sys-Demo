@@ -2,6 +2,7 @@ package com.itec.service;
 
 import org.springframework.stereotype.Service;
 
+import com.itec.pojo.User;
 import com.itec.pojo.vo.LoginUser;
 import com.itec.pojo.vo.R;
 import com.itec.pojo.vo.UserQuaryCondition;
@@ -16,4 +17,11 @@ public interface UserService {
 
 	R deleteUserById(String userId);
 
+	R insertUser(User user);
+
+	R selectUserById(String userId);
+
+	R updateUserByUserId(User user);
+
+	R updatePwdByUserId(User user);
 }

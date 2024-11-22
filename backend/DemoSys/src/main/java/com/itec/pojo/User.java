@@ -55,7 +55,8 @@ public class User {
 	 *
 	 * @mbg.generated Thu Nov 14 21:49:59 HKT 2024
 	 */
-	private Integer userPwExpiration;
+
+	private Date userPwExpiration;
 
 	/**
 	 *
@@ -64,6 +65,7 @@ public class User {
 	 *
 	 * @mbg.generated Thu Nov 14 21:49:59 HKT 2024
 	 */
+
 	private Date userExPwDay;
 
 	/**
@@ -257,7 +259,7 @@ public class User {
 	 *
 	 * @mbg.generated Thu Nov 14 21:49:59 HKT 2024
 	 */
-	public Integer getUserPwExpiration() {
+	public Date getUserPwExpiration() {
 		return userPwExpiration;
 	}
 
@@ -269,7 +271,7 @@ public class User {
 	 *
 	 * @mbg.generated Thu Nov 14 21:49:59 HKT 2024
 	 */
-	public void setUserPwExpiration(Integer userPwExpiration) {
+	public void setUserPwExpiration(Date userPwExpiration) {
 		this.userPwExpiration = userPwExpiration;
 	}
 

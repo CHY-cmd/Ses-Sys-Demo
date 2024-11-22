@@ -40,14 +40,14 @@
                             <v-col>
                                 <v-text-field variant="outlined" bg-color="white" width="250"
                                     v-model="userQuaryCondition.userMailaddress"></v-text-field>
-                                <v-checkbox v-model="userQuaryCondition.userLockFlg" color="primary"></v-checkbox>
+                                <v-checkbox v-model="isUserLocked" color="primary"></v-checkbox>
                             </v-col>
                         </v-row>
                     </div>
                     <div
                         style="display: flex;justify-content: center;align-items: center;background-color: rgb(242, 242, 242);height: 60px;">
                         <v-btn class="btn" @click="selectUserInfo">検索</v-btn>
-                        <v-btn class="btn" @click="addCust">新規作成</v-btn>
+                        <v-btn class="btn" @click="showAddDialog = true">新規作成</v-btn>
                         <v-btn class="btn" @click="reset">リセット</v-btn>
                     </div>
                 </div>
@@ -100,23 +100,21 @@
                                 <!-- 删除编辑修改入口 -->
                                 <td>
                                     <div style="display: flex;margin-top: 5px;margin-bottom: 5px;">
-                                        <router-link :to="'/CustinfoAdd/' + item.userId">
-                                            <v-btn text
-                                                style="width: 70px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255);margin-right: 5px;">編集</v-btn>
-                                        </router-link>
+                                        <v-btn text @click="openUpdateDialog(item.userId)"
+                                            style="width: 70px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255);margin-right: 5px;">編集</v-btn>
                                         <v-btn text @click="deleteUserByID(item.userId)"
                                             style="width: 70px;height: 35px;background-color: rgb(217, 217, 217);color: rgb(255, 255, 255);margin-right: 5px;">削除</v-btn>
                                     </div>
-                                    <div style="margin-bottom: 5px;"><v-btn text @click="deleteUserByID(item.userId)"
+                                    <div style="margin-bottom: 5px;"><v-btn text @click="openResetDialog(item.userId)"
                                             style="width: 145px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255);">レセットバスワード</v-btn>
                                     </div>
                                 </td>
                                 <td style="text-align: center;">{{ (currentPage - 1) * limit + index + 1 }}</td>
                                 <td style="text-align: center;">{{ item.userNm }}</td>
-                                <td style="text-align: center;">{{ item.userRole }}</td>
+                                <td style="text-align: center;">{{ getRoleName(item.userRole) }}</td>
                                 <td style="text-align: center;">{{ item.userMailaddress }}</td>
-                                <td style="text-align: center;">{{ item.userExPwDay }}</td>
-                                <td style="text-align: center;">{{ item.userLockFlg }}</td>
+                                <td style="text-align: center;">{{ item.userPwExpiration }}</td>
+                                <td style="text-align: center;">{{ getUserLock(item.userLockFlg) }}</td>
                                 <td style="text-align: center;">{{ item.managerCrdUsr }}</td>
                                 <td style="text-align: center;"> {{ item.managerCrdDt }}</td>
                                 <td style="text-align: center;">{{ item.managerUpdUsr }}</td>
@@ -126,6 +124,24 @@
                     </v-table>
                 </div>
 
+                <!-- 新增 -->
+                <V-dialog v-model="showAddDialog" persistent min-height="600">
+                    <v-card min-height="600"><user-add @close="closeAddDialog"></user-add></v-card>
+                </V-dialog>
+
+                <!-- 编辑 -->
+                <V-dialog v-model="showUpdateDialog" v-if="showUpdateDialog && selectedUserId !== null" persistent
+                    min-height="600">
+                    <v-card min-height="600"><user-update @close="closeUpdateDialog"
+                            :userId="selectedUserId"></user-update></v-card>
+                </V-dialog>
+
+                <!-- 密码重置 -->
+                <V-dialog v-model="showResetDialog" v-if="showResetDialog && selectedUserId !== null" persistent
+                    min-height="600">
+                    <v-card min-height="600"><user-reset @close="closeResetDialog"
+                            :userId="selectedUserId"></user-reset></v-card>
+                </V-dialog>
 
                 <!-- 页码部分 -->
                 <div style="background-color:  rgb(242, 242, 242);">
@@ -147,12 +163,18 @@
 </template>
 <script>
 import NavigationDrawer from "@/components/NavigationDrawer.vue";
+import UserAdd from "@/views/UserAdd.vue";
+import UserUpdate from "@/views/UserUpdate.vue";
+import UserReset from "@/views/UserReset.vue";
 import UserApi from '@/api/User.js';
 
 export default {
     name: 'UserList',
     components: {
-        NavigationDrawer
+        NavigationDrawer,
+        UserAdd,
+        UserUpdate,
+        UserReset
     },
     mixins: [],
     props: {
@@ -166,7 +188,7 @@ export default {
                 userMailaddress: '',
                 userNm: '',
                 userRole: '',
-                userLockFlg: '',
+                userLockFlg: '0',
             },
             snackbar: {
                 show: false,
@@ -179,12 +201,27 @@ export default {
             totalItems: 0,
             totalPages: 1,
             pageSize: 10,
+            pageSizes: [10, 30, 50],
             selectItems: [
                 { title: '管理', value: '1' },
                 { title: '営業', value: '2' },
                 { title: '総務', value: '3' },
                 { title: '一般', value: '4' },
             ],
+            showAddDialog: false,
+            showUpdateDialog: false,
+            showResetDialog: false,
+            selectedUserId: null,
+            roleMap: {
+                1: '管理',
+                2: '営業',
+                3: '総務',
+                4: '一般',
+            },
+            lockMap: {
+                0: '未ロック',
+                1: 'ロック済み',
+            },
         }
     },
     computed: {
@@ -193,6 +230,15 @@ export default {
         },
         username() {
             return this.$store.state.username;
+        },
+        //数据库为char类型，checkbox的boolean转换成字符串
+        isUserLocked: {
+            get() {
+                return this.userQuaryCondition.userLockFlg === '1';
+            },
+            set(value) {
+                this.userQuaryCondition.userLockFlg = value ? '1' : '0';
+            }
         }
     },
     watch: {
@@ -273,6 +319,42 @@ export default {
                     console.log('キャンセル');
                 }
             }
+        },
+
+        getRoleName(roleId) {
+            return this.roleMap[roleId];
+        },
+
+        getUserLock(lockFlg) {
+            return this.lockMap[lockFlg];
+        },
+
+        closeAddDialog() {
+            this.showAddDialog = false;
+            this.selectUserInfo();
+        },
+
+        openUpdateDialog(userId) {
+            console.log('Opening dialog with userId:', userId);
+            this.selectedUserId = userId;
+            console.log(' selectedUserId:', this.selectedUserId);
+            this.showUpdateDialog = true;
+        },
+
+        closeUpdateDialog() {
+            this.showUpdateDialog = false;
+            this.selectUserInfo();
+        },
+
+        openResetDialog(userId) {
+            console.log('Opening dialog with userId:', userId);
+            this.selectedUserId = userId;
+            console.log(' selectedUserId:', this.selectedUserId);
+            this.showResetDialog = true;
+        },
+        closeResetDialog() {
+            this.showResetDialog = false;
+            this.selectUserInfo();
         },
 
         reset() {

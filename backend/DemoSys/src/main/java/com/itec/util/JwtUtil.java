@@ -48,7 +48,7 @@ public class JwtUtil {
 	// 通过token来获取用户名
 	public static String getUsernameByToken(String token) {
 		Claims body = Jwts.parser().setSigningKey(APP_KEY).parseClaimsJws(token).getBody();
-		String userMailaddress = (String) body.get("userMailaddress");
+		String userMailaddress = (String) body.get("username");
 		return userMailaddress;
 	}
 

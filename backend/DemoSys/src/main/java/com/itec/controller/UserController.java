@@ -1,16 +1,19 @@
 package com.itec.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.itec.pojo.User;
 import com.itec.pojo.vo.LoginUser;
 import com.itec.pojo.vo.R;
 import com.itec.pojo.vo.UserQuaryCondition;
@@ -51,5 +54,32 @@ public class UserController {
 	@DeleteMapping("/deleteUserByID/{userId}")
 	public R deleteUserById(@PathVariable("userId") String userId) {
 		return userService.deleteUserById(userId);
+	}
+
+	// 新增
+	@Transactional
+	@PostMapping("/insertUser")
+	public R insertUser(@RequestBody User user) {
+		return userService.insertUser(user);
+	}
+
+	// 通过id查询
+	@GetMapping("/selectUserById/{userId}")
+	public R selectUserById(@PathVariable("userId") String userId) {
+		return userService.selectUserById(userId);
+	}
+
+	// 修改
+	@Transactional
+	@PutMapping("/updateUserByUserId")
+	public R updateUserByUserId(@RequestBody User user) {
+		return userService.updateUserByUserId(user);
+	}
+
+	// 修改密码
+	@Transactional
+	@PutMapping("/updatePwdByUserId")
+	public R updatePwdByUserId(@RequestBody User user) {
+		return userService.updatePwdByUserId(user);
 	}
 }

@@ -6,6 +6,9 @@ import CustInfoDetail from '../views/CustInfoDetail.vue'
 import Login from '../views/Login.vue'
 import store from '@/store';
 import UserList from '../views/UserList.vue'
+import UserAdd from '../views/UserAdd.vue'
+import UserUpdate from '../views/UserUpdate.vue'
+import UserReset from '../views/UserReset.vue'
 
 const routes = [
   { path: '/', redirect: '/Login' },
@@ -46,6 +49,27 @@ const routes = [
     name: 'UserList',
     component: UserList,
     meta: { requiresAuth: true, title: 'ユーザー管理—ユーザー情報管理'  }
+  },
+  {
+    path: '/UserAdd',
+    name: 'UserAdd',
+    component: UserAdd,
+    hidden:true,
+    meta: { requiresAuth: true}
+  },
+  {
+    path: '/UserUpdate/:userId',
+    name: 'UserInfoEdit',
+    component: UserUpdate,
+    hidden:true,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/UserReset/:userId',
+    name: 'UserInfoEdit',
+    component: UserReset,
+    hidden:true,
+    meta: { requiresAuth: true }
   },
 ]
 const router = createRouter({
