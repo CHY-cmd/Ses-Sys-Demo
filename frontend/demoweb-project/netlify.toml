@@ -1,0 +1,6 @@
+[build]
+  publish = "frontend/demoweb-project/dist"
+  command = "cd frontend/demoweb-project && npm install && npm run build"
+
+[context.production.environment]
+  NODE_ENV = "production"

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itec.mapper.CustMangGeneralMapper">
+<resultMap id="CustInfoResultMap" type="com.itec.pojo.CustInfo">
+    <id column="CUST_ID" jdbcType="VARCHAR" property="custId" />
+    <result column="CUST_NM" jdbcType="VARCHAR" property="custNm" />
+    <result column="CUST_KN" jdbcType="VARCHAR" property="custKn" />
+    <result column="CUST_PHONE" jdbcType="VARCHAR" property="custPhone" />
+    <result column="CUST_DELFLG" jdbcType="TINYINT" property="custDelflg" />
+    <result column="CUST_FAX" jdbcType="VARCHAR" property="custFax" />
+    <result column="CUST_WEB" jdbcType="VARCHAR" property="custWeb" />
+    <result column="CUST_POSTNO" jdbcType="VARCHAR" property="custPostno" />
+    <result column="CUST_ADDRESS" jdbcType="VARCHAR" property="custAddress" />
+    <result column="CUST_TYPE" jdbcType="VARCHAR" property="custType" />
+    <result column="CUST_MONEY" jdbcType="VARCHAR" property="custMoney" />
+    <result column="CUST_INVOICE_NO" jdbcType="VARCHAR" property="custInvoiceNo" />
+    <result column="CUST_INFOR_SECURITY" jdbcType="TINYINT" property="custInforSecurity" />
+    <result column="CUST_DISPATCH" jdbcType="TINYINT" property="custDispatch" />
+    <result column="CUST_EMPNUM" jdbcType="INTEGER" property="custEmpnum" />
+    <result column="CUST_STARTDT" jdbcType="DATE" property="custStartdt" />
+    <result column="CUST_ANNUALSALE" jdbcType="VARCHAR" property="custAnnualsale" />
+    <result column="CUST_COMPANYREP" jdbcType="VARCHAR" property="custCompanyrep" />
+    <result column="CUST_RMK1" jdbcType="VARCHAR" property="custRmk1" />
+    <result column="CUST_RMK2" jdbcType="VARCHAR" property="custRmk2" />
+    <result column="CUST_CLOSEDT" jdbcType="VARCHAR" property="custClosedt" />
+    <result column="CUST_PAYDT" jdbcType="VARCHAR" property="custPaydt" />
+    <result column="CUST_ORDERDT" jdbcType="VARCHAR" property="custOrderdt" />
+    <result column="CUST_GETDT" jdbcType="VARCHAR" property="custGetdt" />
+    <result column="CUST_GETCDT" jdbcType="VARCHAR" property="custGetcdt" />
+    <result column="CUST_ORDERGDT" jdbcType="VARCHAR" property="custOrdergdt" />
+    <result column="BANK_CD" jdbcType="VARCHAR" property="bankCd" />
+    <result column="BANK_CHRCD" jdbcType="VARCHAR" property="bankChrcd" />
+    <result column="CUST_BANK_NM" jdbcType="VARCHAR" property="custBankNm" />
+    <result column="CUST_BRANCH_NM" jdbcType="VARCHAR" property="custBranchNm" />
+    <result column="CUST_DEPOSITTYPE" jdbcType="VARCHAR" property="custDeposittype" />
+    <result column="CUST_BRANCHCD" jdbcType="VARCHAR" property="custBranchCd" />
+    <result column="CUST_ACCOUNTNO" jdbcType="INTEGER" property="custAccountno" />
+    <result column="CUST_NOMINEE" jdbcType="VARCHAR" property="custNominee" />
+    <result column="CUST_CRD_USR" jdbcType="VARCHAR" property="custCrdUsr" />
+    <result column="CUST_CRD_DT" jdbcType="DATE" property="custCrdDt" />
+    <result column="CUST_UPD_USR" jdbcType="VARCHAR" property="custUpdUsr" />
+    <result column="CUST_UPD_DT" jdbcType="DATE" property="custUpdDt" />
+  </resultMap>
+  <resultMap id="MangInfoResultMap" type="com.itec.pojo.MangInfo">
+    <id column="MANAGER_CD" jdbcType="VARCHAR" property="managerCd" />
+    <id column="MANAGER_CHRCD" jdbcType="VARCHAR" property="managerChrcd" />
+    <result column="MANAGER_NM" jdbcType="VARCHAR" property="managerNm" />
+    <result column="MANAGER_CUST_ID" jdbcType="VARCHAR" property="managerCustId" />
+    <result column="MANAGER_PNO" jdbcType="VARCHAR" property="managerPno" />
+    <result column="MANAGER_JOB" jdbcType="VARCHAR" property="managerJob" />
+    <result column="MANAGER_RMK" jdbcType="VARCHAR" property="managerRmk" />
+    <result column="MANAGER_MAIL" jdbcType="VARCHAR" property="managerMail" />
+    <result column="MANAGER_CRD_USR" jdbcType="VARCHAR" property="managerCrdUsr" />
+    <result column="MANAGER_CRD_DT" jdbcType="DATE" property="managerCrdDt" />
+    <result column="MANAGER_UPD_USR" jdbcType="VARCHAR" property="managerUpdUsr" />
+    <result column="MANAGER_UPD_DT" jdbcType="DATE" property="managerUpdDt" />
+  </resultMap>
+   <resultMap id="CustMangResultMap" type="com.itec.pojo.CustMangRequest">
+        <association property="custInfo" resultMap="CustInfoResultMap"/>
+        <collection property="mangInfo" ofType="com.itec.pojo.MangInfo" resultMap="MangInfoResultMap"/>
+    </resultMap>
+    <!-- 概览查询 -->
+    <select id="selectGeneral" resultType="com.itec.pojo.CustMangGeneral">
+        SELECT 
+        c.CUST_ID,
+            c.CUST_NM, 
+            c.CUST_PHONE, 
+            c.CUST_ADDRESS, 
+            m.MANAGER_NM 
+        FROM 
+            cust_tbl c 
+        JOIN 
+            mang_tbl m ON c.CUST_ID = m.MANAGER_CUST_ID
+       <where>
+            <if test="generalQuaryCondition.custNm != null">
+                AND c.CUST_NM LIKE CONCAT('%', #{generalQuaryCondition.custNm}, '%')
+            </if>
+            <if test="generalQuaryCondition.managerNm != null">
+                AND m.MANAGER_NM LIKE CONCAT('%', #{generalQuaryCondition.managerNm}, '%')
+            </if>
+            <if test="generalQuaryCondition.custInforSecurity != null">
+                AND c.CUST_INFOR_SECURITY = #{generalQuaryCondition.custInforSecurity, jdbcType=INTEGER}
+            </if>
+            <if test="generalQuaryCondition.custDispatch != null">
+                AND c.CUST_DISPATCH = #{generalQuaryCondition.custDispatch, jdbcType=INTEGER}
+            </if>
+            <if test="true">
+                AND CUST_DELFLG = 0
+            </if>
+        </where>
+        ORDER BY 
+            c.CUST_NM ASC 
+        LIMIT 
+            #{startIndex}, #{limit} 
+    </select>
+
+    <!-- 概览查询条数 -->
+    <select id="selectGeneralNum" resultType="int">
+        SELECT 
+            COUNT(*) 
+        FROM 
+            cust_tbl c 
+        JOIN 
+            mang_tbl m ON c.CUST_ID = m.MANAGER_CUST_ID
+       <where>
+            <if test="generalQuaryCondition.custNm != null">
+                AND c.CUST_NM LIKE CONCAT('%', #{generalQuaryCondition.custNm}, '%')
+            </if>
+            <if test="generalQuaryCondition.managerNm != null">
+                AND m.MANAGER_NM LIKE CONCAT('%', #{generalQuaryCondition.managerNm}, '%')
+            </if>
+            <if test="generalQuaryCondition.custInforSecurity != null and generalQuaryCondition.custInforSecurity !=''">
+                AND c.CUST_INFOR_SECURITY = #{generalQuaryCondition.custInforSecurity}
+            </if>
+            <if test="generalQuaryCondition.custDispatch != null and generalQuaryCondition.custDispatch != ''">
+                AND c.CUST_DISPATCH = #{generalQuaryCondition.custDispatch}
+            </if>
+            <if test="true">
+                AND CUST_DELFLG = 0
+            </if>
+        </where>
+    </select>
+    
+    <!--通过id合并查询-->
+    <select id="selectDetailByCustId" resultMap="CustMangResultMap">
+        SELECT 
+           c.*,
+            m.*
+        FROM 
+            cust_tbl c
+        JOIN 
+            mang_tbl m ON c.CUST_ID = m.MANAGER_CUST_ID
+        WHERE c.CUST_ID=#{custId} AND c.CUST_DELFLG = 0
+    </select>
+
+
+
+</mapper>
