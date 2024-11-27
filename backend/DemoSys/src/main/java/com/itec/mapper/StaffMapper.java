@@ -16,8 +16,8 @@ public interface StaffMapper {
 	List<Staff> selectAllStaff();
 
 	// 逻辑删除
-	@Delete("update STAFF_TBL set STAFF_DELFLG = 1 where STAFF_DELFLG = 0 and STAFF_ID = #{staffId}")
-	int deleteStaffByID(String staffId);
+	@Delete("update STAFF_TBL set STAFF_DELFLG = 1,STAFF_DELDT=CONVERT_TZ(NOW(), '+00:00', '+09:00') where STAFF_DELFLG = 0 and STAFF_ID = #{staffId}")
+	int deleteStaffByID(@Param("staffId") String staffId);
 
 	// 分页查询概览
 	List<Staff> selectStaffInfo(@Param("startIndex") Integer startIndex, @Param("limit") Integer limit,
