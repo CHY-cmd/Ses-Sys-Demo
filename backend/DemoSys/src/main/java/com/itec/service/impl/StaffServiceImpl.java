@@ -1,5 +1,6 @@
 package com.itec.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,36 @@ public class StaffServiceImpl implements StaffService {
 		} else {
 			return R.success().message("検索結果は0件です").data("itemsNum", selectStaffNum);
 		}
+	}
+
+	@Override
+	public R insertStaff(Staff staff) {
+		staff.setStaffCreDt(new Date());
+		staff.setStaffUpdDt(new Date());
+		staff.setStaffDelflg("0");
+		int i = staffMapper.insertStaff(staff);
+		if (i > 0) {
+			return R.success().message("登録成功");
+		} else {
+			return R.error().message("登録エラー");
+		}
+	}
+
+	@Override
+	public R updateStaffById(Staff staff) {
+		staff.setStaffUpdDt(new Date());
+		int i = staffMapper.updateStaffById(staff);
+		if (i > 0) {
+			return R.success().message("更新成功");
+		} else {
+			return R.error().message("更新エラー");
+		}
+	}
+
+	@Override
+	public R selectStaffById(String staffId) {
+		List<Staff> selectStaffById = staffMapper.selectStaffById(staffId);
+		return R.success().data("items", selectStaffById);
 	}
 
 }

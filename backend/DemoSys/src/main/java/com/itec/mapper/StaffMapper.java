@@ -25,4 +25,14 @@ public interface StaffMapper {
 
 	// 分页查询页数
 	Integer selectStaffNum(@Param("staffQuaryCondition") StaffQuaryCondition staffQuaryCondition);
+
+	// 通过id查询
+	@Select("select * from STAFF_TBL where STAFF_ID = #{staffId} AND STAFF_DELFLG = 0")
+	List<Staff> selectStaffById(@Param("staffId") String staffId);
+
+	// 新增
+	int insertStaff(Staff staff);
+
+	// 更新
+	int updateStaffById(Staff staff);
 }

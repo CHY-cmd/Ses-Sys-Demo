@@ -11,7 +11,7 @@
                 </div>
 
                 <!-- 查询部分 -->
-                <div style="">
+                <div>
                     <div class="select-area">
                         <v-row style="margin-top: 20px;">
                             <v-col>

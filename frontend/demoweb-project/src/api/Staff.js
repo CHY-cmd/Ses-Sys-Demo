@@ -26,6 +26,15 @@ export default {
     });
   },
 
+  //通过id查询
+  selectStaffById(staffId) {
+    return request({
+      url: `${BASE_URL}/staff/selectStaffById/${staffId}`,
+      method: "get",
+     ...getAuthConfig(),
+    });
+  },
+
   //删除
   deleteStaffByID(staffId) {
     return request({
@@ -36,22 +45,22 @@ export default {
   },
 
   //新增
-//   insertUser(user) {
-//     return request({
-//       url: `${BASE_URL}/user/insertUser`,
-//       method: "post",
-//       data: user,
-//       ...getAuthConfig(),
-//     });
-//   },
+  insertStaff(staff) {
+    return request({
+      url: `${BASE_URL}/staff/insertStaff`,
+      method: "post",
+      data: staff,
+      ...getAuthConfig(),
+    });
+  },
 
   //更新
-//   updateUserByUserId(user) {
-//     return request({
-//       url: `${BASE_URL}/user/updateUserByUserId`,
-//       method: "put",
-//       data: user,
-//       ...getAuthConfig(),
-//     });
-//   },
+  updateStaffById(staff) {
+    return request({
+      url: `${BASE_URL}/staff/updateStaffById`,
+      method: "put",
+      data: staff,
+      ...getAuthConfig(),
+    });
+  },
 };

@@ -11,7 +11,7 @@
                 </div>
 
                 <!-- 查询部分 -->
-                <div style="height:250px;">
+                <div>
                     <div class="select-area">
                         <v-row style="margin-top: 20px;">
                             <v-col>
@@ -51,7 +51,7 @@
                         </v-row>
                     </div>
                     <div
-                        style="display: flex;justify-content: center;align-items: center;background-color: rgb(242, 242, 242);height: 60px;">
+                        style="display: flex;justify-content: center;align-items: center;background-color: rgb(242, 242, 242);">
                         <v-btn class="btn" @click="selectGeneral">検索</v-btn>
                         <v-btn class="btn" @click="addCust">新規登録</v-btn>
                         <v-btn class="btn" @click="reset">リセット</v-btn>

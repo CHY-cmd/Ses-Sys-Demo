@@ -11,7 +11,8 @@ import UserUpdate from '../views/UserUpdate.vue'
 import UserReset from '../views/UserReset.vue'
 import UserSelfReset from '../views/UserSelfReset.vue'
 import StaffInfoList from '../views/StaffInfoList.vue'
-
+import StaffInfoAdd from '../views/StaffInfoAdd.vue'
+import StaffInfoDetail from '../views/StaffInfoDetail.vue'
 
 const routes = [
   { path: '/', redirect: '/Login' },
@@ -87,6 +88,25 @@ const routes = [
     component: StaffInfoList,
     meta: { requiresAuth: true, title: '基本情報—スタッフ情報一覧'  }
   },
+  {
+    path: '/StaffInfoAdd',
+    name: 'StaffInfoAdd',
+    component: StaffInfoAdd,
+    meta: { requiresAuth: true, title: '基本情報—スタッフ情報管理'  }
+  },
+  {
+    path: '/StaffInfoAdd/:staffId',
+    name: 'StaffInfoEdit',
+    component: StaffInfoAdd,
+    hidden:true,
+    meta: { requiresAuth: true, title: '基本情報—スタッフ情報管理'  }
+  },
+  {
+    path: '/StaffInfoDetail/:staffId',
+    name: 'StaffInfoDetail',
+    component: StaffInfoDetail,
+    meta: { requiresAuth: true, title: '基本情報—スタッフ情報詳細'  }
+  },
   
 ]
 const router = createRouter({
@@ -94,6 +114,7 @@ const router = createRouter({
   routes
 })
 
+//判断是否已授权，无授权跳转到登录
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.state.isLoggedIn) {

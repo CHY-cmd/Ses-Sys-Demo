@@ -40,7 +40,7 @@
                         <div
                             style="display: flex;justify-content: center;align-items: center;background-color: rgb(242, 242, 242);height: 60px;">
                             <v-btn class="btn" @click="selectStaffInfo">検索</v-btn>
-                            <v-btn class="btn" @click="addCust">新規入力</v-btn>
+                            <v-btn class="btn" @click="addStaff">新規入力</v-btn>
                             <v-btn class="btn" @click="reset">リセット</v-btn>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                                 <tr v-for="(item, index) in items" :key="index">
                                     <!-- 删除编辑入口 -->
                                     <td>
-                                        <router-link :to="'/StaffAdd/' + item.staffId"><v-btn text
+                                        <router-link :to="'/StaffInfoAdd/' + item.staffId"><v-btn text
                                                 style="width: 70px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255)">編集</v-btn></router-link>
                                     </td>
                                     <td><v-btn text @click="deleteStaffByID(item.staffId)"
@@ -89,7 +89,7 @@
                                     <td @click="toDetail(item.staffId)">{{ item.staffNm }}</td>
                                     <td @click="toDetail(item.staffId)">{{ getRoleName(item.staffCls) }}</td>
                                     <td @click="toDetail(item.staffId)">{{ getSaleStatus(item.staffSalesstatus) }}</td>
-                                    <td @click="toDetail(item.staffId)">{{ item.staffRmk1 }}</td>
+                                    <td @click="toDetail(item.staffId)">{{ item.staffRmk2 }}</td>
                                 </tr>
                             </tbody>
                         </v-table>
@@ -277,6 +277,16 @@ export default {
             this.staffQuaryCondition.staffSalesstatus = '';
             this.currentPage = 1;
         },
+
+        addStaff(){
+            this.$router.push('/StaffInfoAdd');
+        },
+
+        //跳转详情页
+        toDetail(staffId) {
+            this.$router.push({ path: `/StaffInfoDetail/${staffId}` });
+        }
+
     }
 };
 </script>

@@ -6,6 +6,7 @@
                <v-app-bar :elevation="1" style="background-color: rgb(0, 114, 159);height: 64px">
                   <v-app-bar-title style="font-size: 30px;color: aliceblue" class="d-flex align-center">取引先情報詳細
                   </v-app-bar-title>
+                  <div style="color: aliceblue;">{{ username }}</div>
                </v-app-bar>
             </div>
             <div

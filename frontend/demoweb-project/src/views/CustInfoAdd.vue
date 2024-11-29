@@ -6,6 +6,7 @@
                 <v-app-bar :elevation="1" style="background-color: rgb(0, 114, 159);height: 64px">
                     <v-app-bar-title style="font-size: 30px;color: aliceblue" class="d-flex align-center">取引先情報
                     </v-app-bar-title>
+                    <div style="color: aliceblue;">{{ username }}</div>
                 </v-app-bar>
             </div>
             <div
@@ -20,7 +21,7 @@
             </div>
 
             <!-- 表单 基本情報 -->
-            <div style="height: 600px;width: auto;background-color:rgb(242, 242, 242);">
+            <div style="width: auto;background-color:rgb(242, 242, 242);">
                 <v-container fluid style="margin-left: 90px;padding-top: 0px;">
                     <v-row style="margin-top: 0px;">
                         <v-col cols="5">
@@ -88,10 +89,10 @@
                                     <v-menu ref="menu" v-model="menu" :close-on-content-click="false"
                                         transition="scale-transition"
                                         style="position: absolute;left:1050px;top: 400px;">
-                                        <template v-slot:activator="{ on, attrs }">
+                                        <template v-slot:activator="{  attrs }">
                                             <div class="d-flex align-center input-with-icon">
                                                 <input v-model="formattedDate" type="date" class="custom-input" readonly
-                                                    @click="toggleMenu" v-bind="attrs" v-on="on" />
+                                                    @click="toggleMenu" v-bind="attrs" />
                                                 <v-icon :color="menu ? 'error' : 'primary'" @click="toggleMenu">
                                                     {{ menu ? 'mdi-close' : 'mdi-calendar' }}
                                                 </v-icon>
