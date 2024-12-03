@@ -139,8 +139,7 @@
                                     <v-col cols="2" style="max-width: 15%;"><span>緊急連絡先</span></v-col>
                                     <v-col cols="3">
                                         <input id="custPhone" v-model="staff.staffEmergencycall"
-                                            @input="formatPhoneNumber($event)" type="text"
-                                            class="custom-input">
+                                            @input="formatPhoneNumber($event)" type="text" class="custom-input">
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -481,7 +480,8 @@ export default {
         this.resetDailyNumber();
     },
     created() {
-
+        this.selectStaffById(this.$route.params.staffId);
+        this.resetDailyNumber();
     },
     methods: {
         //通过id查询并回显
@@ -512,11 +512,12 @@ export default {
         insertOrUpdate() {
             if (this.$route.params.staffId) {
                 this.updateStaffById();
-                location.reload()
             } else {
                 this.insertStaff();
-                location.reload()
             }
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
         },
 
         //新增
@@ -531,12 +532,12 @@ export default {
             console.log('Formatted staffBirthdt:', this.staff.staffBirthdt);
             const response = await StaffApi.insertStaff(this.staff);
             try {
-                this.snackbar.show =true;
-                this.snackbar.message = response.data.message;
+                this.snackbar.show = true;
+                this.snackbar.message = response.message;
                 this.snackbar.color = 'success';
             } catch (error) {
                 this.snackbar.show = true;
-                this.snackbar.message = response.data.message;
+                this.snackbar.message = response.message;
                 this.snackbar.color = 'error';
             }
         },
@@ -553,11 +554,11 @@ export default {
             const response = await StaffApi.updateStaffById(this.staff);
             try {
                 this.snackbar.show = true;
-                this.snackbar.message = response.data.message;
+                this.snackbar.message = response.message;
                 this.snackbar.color = 'success';
             } catch (error) {
                 this.snackbar.show = true;
-                this.snackbar.message = response.data.message;
+                this.snackbar.message = response.message;
                 this.snackbar.color = 'error';
             }
         },
