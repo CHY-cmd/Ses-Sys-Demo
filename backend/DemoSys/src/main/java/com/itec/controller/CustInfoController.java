@@ -54,8 +54,9 @@ public class CustInfoController {
 	@Transactional
 	public R insertCustMang(@RequestBody CustMangRequest custMangRequest) {
 		CustInfo custInfo = custMangRequest.getCustInfo();
-		String custId = IDUtil.getID();
-		custInfo.setCustId(custId);
+		String custId = custInfo.getCustId();
+//		String custId = IDUtil.getID();
+//		custInfo.setCustId(custId);
 		custInfo.setCustDelflg(false);
 		custInfo.setCustCrdDt(LocalDateTime.now());
 		custInfo.setCustUpdDt(LocalDateTime.now());

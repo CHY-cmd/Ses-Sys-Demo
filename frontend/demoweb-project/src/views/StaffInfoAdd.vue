@@ -28,7 +28,7 @@
                                 <v-row>
                                     <v-col cols="3" style="background-color: rgb(217, 217, 217);margin: 0px;"><span
                                             style="color: brown;">社員番号</span></v-col>
-                                    <v-col cols="8"><input v-model="staff.staffNo" type="text" required readonly
+                                    <v-col cols="8"><input v-model="staff.staffNo" type="text" required readonly placeholder="自動入力"
                                             class="custom-input"></v-col>
                                 </v-row>
                                 <v-row>
@@ -86,7 +86,7 @@
                                 <v-row>
                                     <v-col cols="2" style="background-color:rgb(217, 217, 217);"><span
                                             style="color: brown;">年齢</span></v-col>
-                                    <v-col cols="3"><input readonly v-model="staff.staffAge"
+                                    <v-col cols="3"><input readonly v-model="staff.staffAge" placeholder="自動入力" style="display: flex"
                                             class="custom-input"></v-col>
                                     <v-col cols="2" style="max-width: 15%;"><span
                                             style="color: brown;">生年月日</span></v-col>
@@ -95,8 +95,8 @@
                                             transition="scale-transition" style="position: absolute;left:70%;top: 40%;">
                                             <template v-slot:activator="{ attrs }">
                                                 <div class="d-flex align-center input-with-icon">
-                                                    <input v-model="formattedDates.date1" class="custom-input"
-                                                        @input="handleDateInput(1)" type="text" v-bind="attrs" />
+                                                    <input v-model="formattedDates.date1" class="custom-input" 
+                                                    @click="toggleMenu(1)" type="text" v-bind="attrs" />
                                                     <v-icon :color="menus.menu1 ? 'error' : 'primary'"
                                                         @click="toggleMenu(1)">
                                                         {{ menus.menu1 ? 'mdi-close' : 'mdi-calendar' }}
@@ -153,7 +153,7 @@
                         </v-row>
                         <v-row>
                             <v-col cols="1"><span>備考</span></v-col>
-                            <v-col style="margin-left: 30px;"><textarea v-model="staff.staffRmk1"
+                            <v-col style="margin-left: 2%;"><textarea v-model="staff.staffRmk1"
                                     class="custom-textarea"></textarea></v-col>
                             <v-col></v-col>
                         </v-row>
@@ -221,7 +221,7 @@
                                     style="background-color:rgb(217, 217, 217);"><span>在留カード有効期限</span></v-col>
                                 <v-col cols="8">
                                     <v-menu ref="menu2" v-model="menus.menu2" :close-on-content-click="false"
-                                        transition="scale-transition" style="position: absolute;left:40%;top: 140%;">
+                                        transition="scale-transition" style="position: absolute;left:40%;top: 120%;">
                                         <template v-slot:activator="{ attrs }">
                                             <div class="d-flex align-center input-with-icon">
                                                 <input v-model="formattedDates.date2" type="text" class="custom-input"
@@ -762,6 +762,7 @@ export default {
     border: 1px solid black;
     border-radius: 6px;
     box-shadow: 2px 2px 2px rgba(62, 62, 62, 0.2);
+    padding-left: 10px;
 }
 
 .custom-input[disabled] {
@@ -770,6 +771,7 @@ export default {
 }
 
 .custom-select {
+    padding-left: 10px;
     font-size: 15px;
     width: 80%;
     height: 35px;
@@ -786,6 +788,7 @@ export default {
 }
 
 .custom-textarea {
+    padding-left: 10px;
     height: 120px;
     width: 71vw;
     border: 1px black solid;

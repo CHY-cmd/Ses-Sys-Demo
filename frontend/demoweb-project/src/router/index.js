@@ -13,6 +13,8 @@ import UserSelfReset from '../views/UserSelfReset.vue'
 import StaffInfoList from '../views/StaffInfoList.vue'
 import StaffInfoAdd from '../views/StaffInfoAdd.vue'
 import StaffInfoDetail from '../views/StaffInfoDetail.vue'
+import ContrInfoList from '../views/ContrInfoList.vue'
+import ContrSesAdd from '../views/ContrSesAdd.vue'
 
 const routes = [
   { path: '/', redirect: '/Login' },
@@ -106,6 +108,18 @@ const routes = [
     name: 'StaffInfoDetail',
     component: StaffInfoDetail,
     meta: { requiresAuth: true, title: '基本情報—スタッフ情報詳細'  }
+  },
+  {
+    path: '/ContrInfoList',
+    name: 'ContrInfoList',
+    component: ContrInfoList,
+    meta: { requiresAuth: true, title: '営業管理—契約情報一覧'  }
+  },
+  {
+    path: '/ContrSesAdd',
+    name: 'ContrSesAdd',
+    component: ContrSesAdd,
+    meta: { requiresAuth: true, title: '営業管理—契約情報管理'  }
   },
   
 ]

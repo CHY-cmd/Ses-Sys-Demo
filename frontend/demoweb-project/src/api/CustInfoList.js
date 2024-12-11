@@ -36,4 +36,13 @@ deleteCustByID(custId){
   })
 },
 
+//查询所有客户
+selectAllCustInfos(){
+  return request({
+    url:`http://localhost:8080/details/selectAllCustInfos`,
+    method:'get',
+    ...getAuthConfig()
+  })
+},
+
 }
