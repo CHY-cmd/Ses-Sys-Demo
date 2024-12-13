@@ -23,9 +23,12 @@
                                 </div>
                             </v-col>
                             <v-col cols="8" sm="2">
-                                <v-text-field variant="outlined" bg-color="white" v-model="a"></v-text-field>
-                                <v-text-field variant="outlined" bg-color="white" v-model="a"></v-text-field>
-                                <v-text-field variant="outlined" bg-color="white" v-model="a"
+                                <v-text-field variant="outlined" bg-color="white"
+                                    v-model="contractQuaryCondition.custNm"></v-text-field>
+                                <v-text-field variant="outlined" bg-color="white"
+                                    v-model="contractQuaryCondition.contrProjectNm"></v-text-field>
+                                <v-text-field variant="outlined" bg-color="white"
+                                    v-model="contractQuaryCondition.contrEngineerNm"
                                     :disabled="isEngiDisabled"></v-text-field>
                             </v-col>
                             <v-col>
@@ -40,7 +43,7 @@
                             </v-col>
                             <v-col cols="8" sm="3" style="margin-right: 5%;">
                                 <v-col style="padding-left: 0px;">
-                                    <v-btn-toggle v-model="a" class="custom-btn-toggle">
+                                    <v-btn-toggle v-model="contractQuaryCondition.quotDelflg" class="custom-btn-toggle">
                                         <v-btn value="1">SES</v-btn>
                                         <v-btn value="2">請負</v-btn>
                                     </v-btn-toggle>
@@ -50,12 +53,12 @@
                                         <v-menu ref="menuStart" v-model="menuStart" :close-on-content-click="false"
                                             transition="scale-transition" offset-y min-width="auto">
                                             <template v-slot:activator="{ props }">
-                                                <v-text-field v-model="formatDatedStartDt" label="契約開始日" bg-color="white"
-                                                    append-icon="mdi-calendar" readonly v-bind="props"
+                                                <v-text-field v-model="formatDatedStartDt" label="契約開始日"
+                                                    bg-color="white" append-icon="mdi-calendar" readonly v-bind="props"
                                                     variant="outlined"></v-text-field>
                                             </template>
-                                            <v-date-picker v-model="startDate" no-title scrollable
-                                                @update:modelValue="menuStart = false"></v-date-picker>
+                                            <v-date-picker v-model="contractQuaryCondition.contrStartdt" no-title
+                                                scrollable @update:modelValue="menuStart = false"></v-date-picker>
                                         </v-menu>
                                     </v-col>
                                     <span style="font-size: x-large;align-content: center;margin-bottom: 5%;">~</span>
@@ -67,19 +70,20 @@
                                                     append-icon="mdi-calendar" readonly v-bind="props"
                                                     variant="outlined"></v-text-field>
                                             </template>
-                                            <v-date-picker v-model="endDate" no-title scrollable
-                                                @update:modelValue="menuEnd = false"></v-date-picker>
+                                            <v-date-picker v-model="contractQuaryCondition.contrEnddt" no-title
+                                                scrollable @update:modelValue="menuEnd = false"></v-date-picker>
                                         </v-menu>
                                     </v-col>
                                 </v-row>
-                                <v-select :items="selectItems" v-model="a" variant="outlined" bg-color="white">
+                                <v-select :items="selectItems" v-model="contractQuaryCondition.contrStatus"
+                                    variant="outlined" bg-color="white">
                                 </v-select>
                             </v-col>
                         </v-row>
                     </div>
                     <div
                         style="display: flex;justify-content: center;align-items: center;background-color: rgb(242, 242, 242);">
-                        <v-btn class="btn" @click="">検索</v-btn>
+                        <v-btn class="btn" @click="selectContrGeneral">検索</v-btn>
                         <v-btn class="btn" @click="toSesAdd">SES新規登録</v-btn>
                         <v-btn class="btn" @click="">請負新規登録</v-btn>
                         <v-btn class="btn" @click="reset">リセット</v-btn>
@@ -141,14 +145,14 @@
                                     </div>
                                 </td>
                                 <td style="text-align: center;">{{ (currentPage - 1) * limit + index + 1 }}</td>
-                                <td style="text-align: center;">{{ item.a }}</td>
-                                <td style="text-align: center;">{{ item.a }}</td>
-                                <td style="text-align: center;">{{ item.a }}</td>
-                                <td style="text-align: center;">{{ item.a }}</td>
-                                <td style="text-align: center;">{{ item.a }}</td>
-                                <td style="text-align: center;">{{ item.a }}</td>
-                                <td style="text-align: center;"> {{ item.a }}</td>
-                                <td style="text-align: center;">{{ item.a }}</td>
+                                <td style="text-align: center;">{{ item.contrNo }}</td>
+                                <td style="text-align: center;">{{ item.custNm }}</td>
+                                <td style="text-align: center;">{{ item.contrProjectNm }}</td>
+                                <td style="text-align: center;">{{ item.contrEngineerNm }}</td>
+                                <td style="text-align: center;">{{ item.contrStatus }}</td>
+                                <td style="text-align: center;">{{ item.contrStartdt }}</td>
+                                <td style="text-align: center;"> {{ item.contrRmk }}</td>
+                                <td style="text-align: center;">{{ item.contrCrdUsr }}</td>
                             </tr>
                         </tbody>
                     </v-table>
@@ -174,6 +178,7 @@
 <script>
 import NavigationDrawer from "@/components/NavigationDrawer.vue";
 import moment from 'moment';
+import ContractApi from "@/api/Contract.js";
 
 export default {
     name: 'ContrInfoList',
@@ -187,9 +192,7 @@ export default {
     data() {
         return {
             username: "",
-
-            a: null, startDate: null, endDate: null,
-
+            contractQuaryCondition: { custNm: '', contrEngineerNm: '', contrProjectNm: '', quotDelflg: '', contrStartdt: null, contrEnddt: null, contrStatus: '' },
             selectItems: [
                 { title: '契約中', value: '1' },
                 { title: '契約終了', value: '2' },
@@ -205,6 +208,8 @@ export default {
                 timeout: 3000
             },
             items: [],
+            currentPage: 1,
+            limit: 10,
             totalItems: 0,
             totalPages: 1,
             pageSize: 10,
@@ -215,8 +220,8 @@ export default {
         username() {
             return this.$store.state.username;
         },
-        formatDatedStartDt() { return this.formatDate(this.startDate) },
-        formatDatedEndDt() { return this.formatDate(this.endDate) },
+        formatDatedStartDt() { return this.formatDate(this.contractQuaryCondition.contrStartdt) },
+        formatDatedEndDt() { return this.formatDate(this.contractQuaryCondition.contrEnddt) },
         totalPages() {
             return Math.ceil(this.totalItems / this.limit);
         },
@@ -228,23 +233,57 @@ export default {
         limit: {
             handler() {
                 this.currentPage = 1;
-                this.selectContrInfo();
+                this.selectContrGeneral();
             },
             immediate: true
         }
     },
     created() {
-        this.selectContrInfo();
+        this.selectContrGeneral();
     },
 
     updated() {
-        this.selectContrInfo();
+        this.selectContrGeneral();
     },
     mounted() {
 
     },
     methods: {
-        selectContrInfo() { },
+        // 控制页码
+        updatePageNum(limit) {
+            this.limit = limit;
+            this.currentPage = 1;
+            this.selectContrGeneral();
+        },
+        updatePage(currentPage) {
+            console.log('Updating page to:', currentPage);
+            this.currentPage = currentPage;
+            this.selectContrGeneral();
+        },
+
+        selectContrGeneral() {
+            ContractApi.selectContrGeneral(this.currentPage, this.limit, this.contractQuaryCondition).then(response => {
+                this.items = response.data.items;
+                this.totalItems = response.data.itemsNum;
+                this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+                if (this.items.length === 0) {
+                    this.snackbar.show = true;
+                    this.snackbar.color = 'error';
+                    this.snackbar.message = response.message
+                    this.$nextTick(() => {
+                        this.snackbar.show = true;
+                        this.snackbar.color = 'error';
+                        this.snackbar.message = response.message
+                    });
+                } else {
+                    this.snackbar.show = false;
+                }
+                console.log(response.data.items);
+            })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
 
 
         //格式化日期以显示

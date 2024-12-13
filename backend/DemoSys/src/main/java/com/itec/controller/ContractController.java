@@ -37,7 +37,7 @@ public class ContractController {
 
 	// 逻辑删除
 	@Transactional
-	@DeleteMapping("/selectContrOperById/{contrNo}")
+	@DeleteMapping("/deleteContrById/{contrNo}")
 	public R deleteContrById(@PathVariable("contrNo") String contrNo) {
 		return contractService.deleteContrById(contrNo);
 	}
