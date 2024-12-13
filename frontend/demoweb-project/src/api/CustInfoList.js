@@ -20,7 +20,7 @@ export default{
 //查询一览
 selectGeneral(currentPage,limit,generalQuaryCondition) {
   return request({
-    url:`http://localhost:8080/general/selectGeneral/${currentPage}/${limit}`,
+    url:`http://localhost:8081/general/selectGeneral/${currentPage}/${limit}`,
     method:'post',
     data:generalQuaryCondition,
     ...getAuthConfig()
@@ -30,7 +30,7 @@ selectGeneral(currentPage,limit,generalQuaryCondition) {
 //删除
 deleteCustByID(custId){
   return request({
-    url:`http://localhost:8080/details/deleteCustByID/${custId}`,
+    url:`http://localhost:8081/details/deleteCustByID/${custId}`,
     method:'delete',
     ...getAuthConfig()
   })
@@ -39,7 +39,7 @@ deleteCustByID(custId){
 //查询所有客户
 selectAllCustInfos(){
   return request({
-    url:`http://localhost:8080/details/selectAllCustInfos`,
+    url:`http://localhost:8081/details/selectAllCustInfos`,
     method:'get',
     ...getAuthConfig()
   })

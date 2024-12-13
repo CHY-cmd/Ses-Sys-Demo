@@ -19,7 +19,7 @@ export default{
 //单独更新客户
 updateCust(custInfo) {
   return request({
-    url:`http://localhost:8080/details/updateCust`,
+    url:`http://localhost:8081/details/updateCust`,
     method:'put',
     data:custInfo,
     ...getAuthConfig()
@@ -29,7 +29,7 @@ updateCust(custInfo) {
 //新增
 insertCustMang(custMangRequest) {
     return request({
-      url:`http://localhost:8080/details/insertCustMang`,
+      url:`http://localhost:8081/details/insertCustMang`,
       method:'post',
       data:custMangRequest,
       ...getAuthConfig()
@@ -39,7 +39,7 @@ insertCustMang(custMangRequest) {
 //单独新增经理
 insertMang(managerCustId,mangInfo) {
   return request({
-    url:`http://localhost:8080/general/insertMang/${managerCustId}`,
+    url:`http://localhost:8081/general/insertMang/${managerCustId}`,
     method:'post',
     data:mangInfo,
     ...getAuthConfig()
@@ -49,7 +49,7 @@ insertMang(managerCustId,mangInfo) {
 //单独更新经理
 updateMang(mangInfo) {
   return request({
-    url:`http://localhost:8080/general/updateMang`,
+    url:`http://localhost:8081/general/updateMang`,
     method:'put',
     data:mangInfo,
     ...getAuthConfig()
@@ -59,7 +59,7 @@ updateMang(mangInfo) {
 //查询银行
 selectBank() {
     return request({
-      url:`http://localhost:8080/details/selectBank`,
+      url:`http://localhost:8081/details/selectBank`,
       method:'get',
       ...getAuthConfig()
     })
@@ -68,7 +68,7 @@ selectBank() {
 //查客户银行
 selectCustBank(){
     return request({
-        url:`http://localhost:8080/details/selectCustBank`,
+        url:`http://localhost:8081/details/selectCustBank`,
         method:'get',
         ...getAuthConfig()
       })
@@ -77,7 +77,7 @@ selectCustBank(){
 //通过id查所有
 selectDetailByCustId(custId) {
   return request({
-    url:`http://localhost:8080/details/selectDetailByCustId/${custId}`,
+    url:`http://localhost:8081/details/selectDetailByCustId/${custId}`,
     method:'get',
     ...getAuthConfig()
   })
