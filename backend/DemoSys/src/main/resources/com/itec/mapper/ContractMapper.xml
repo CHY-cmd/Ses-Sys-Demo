@@ -9,8 +9,8 @@
     -->
     <id column="CONTR_NO" jdbcType="VARCHAR" property="contrNo" />
     <result column="CONTR_CUST_ID" jdbcType="BIGINT" property="contrCustId" />
-    <result column="CONTR_ENGINEER_NM" jdbcType="VARCHAR" property="contrEngineerNm" />
-    <result column="CONTR_PROJECT_NM" jdbcType="VARCHAR" property="contrProjectNm" />
+    <result column="CONTR_ENGINEER_NM" jdbcType="VARCHAR" property="contrEngineerNm" javaType="java.lang.String" typeHandler="org.apache.ibatis.type.StringTypeHandler"/>
+    <result column="CONTR_PROJECT_NM" jdbcType="VARCHAR" property="contrProjectNm" javaType="java.lang.String" typeHandler="org.apache.ibatis.type.StringTypeHandler"/>
     <result column="QUOT_DELFLG" jdbcType="VARCHAR" property="quotDelflg" />
     <result column="CONTR_DELFLG" jdbcType="CHAR" property="contrDelflg" />
     <result column="CONTR_STARTDT" jdbcType="TIMESTAMP" property="contrStartdt" />
@@ -40,8 +40,8 @@
     -->
     <id column="OPER_ID" jdbcType="BIGINT" property="operId" />
     <id column="OPER_NO" jdbcType="VARCHAR" property="operNo" />
-    <result column="OPER_ENGINEER_NM" jdbcType="VARCHAR" property="operEngineerNm" />
-    <result column="OPER_PROJECT_NM" jdbcType="VARCHAR" property="operProjectNm" />
+    <result column="OPER_ENGINEER_NM" jdbcType="VARCHAR" property="operEngineerNm" javaType="java.lang.String" typeHandler="org.apache.ibatis.type.StringTypeHandler"/>
+    <result column="OPER_PROJECT_NM" jdbcType="VARCHAR" property="operProjectNm" javaType="java.lang.String" typeHandler="org.apache.ibatis.type.StringTypeHandler"/>
     <result column="OPER_PRICE_PER" jdbcType="INTEGER" property="operPricePer" />
     <result column="OPER_PURCHASE_PRICE" jdbcType="INTEGER" property="operPurchasePrice" />
     <result column="OPER_STARTDT" jdbcType="TIMESTAMP" property="operStartdt" />
@@ -75,17 +75,59 @@
     CONTR_AMOUNT_SUBTOTAL, CONSUMPTION_TAX, TOTAL_AMOUNT, CONTR_CRD_USR, CONTR_CRD_DT, 
     CONTR_UPD_USR, CONTR_UPD_DT
   </sql>
+
   
    <!-- 概览查询 小于号转写为&lt;-->
 <select id="selectContrGeneral" resultType="com.itec.pojo.Contract">
     SELECT 
+    m.CONTR_CUST_ID,
         m.CONTR_NO,
         c.CUST_NM, 
         m.CONTR_PROJECT_NM, 
+        m.CONTR_ENGINEER_NM,
         m.CONTR_STATUS, 
         m.CONTR_STARTDT, 
         m.CONTR_RMK, 
         m.CONTR_CRD_USR
+    FROM 
+        cust_tbl c 
+    JOIN 
+        CONTRACT_TBL m ON c.CUST_ID = m.CONTR_CUST_ID
+    <where>
+        <if test="contractQuaryCondition.quotDelflg != null and contractQuaryCondition.quotDelflg !=''">
+            AND m.QUOT_DELFLG = #{contractQuaryCondition.quotDelflg}
+        </if>
+        <if test="contractQuaryCondition.custNm != null and contractQuaryCondition.custNm !=''">
+            AND c.CUST_NM LIKE CONCAT('%', #{contractQuaryCondition.custNm}, '%')
+        </if>
+        <if test="contractQuaryCondition.contrEngineerNm != null and contractQuaryCondition.contrEngineerNm !=''">
+            AND m.CONTR_ENGINEER_NM LIKE CONCAT('%', #{contractQuaryCondition.contrEngineerNm}, '%')
+        </if>
+        <if test="contractQuaryCondition.contrProjectNm != null and contractQuaryCondition.contrProjectNm !=''">
+            AND m.CONTR_PROJECT_NM LIKE CONCAT('%', #{contractQuaryCondition.contrProjectNm}, '%')
+        </if>
+        <if test="contractQuaryCondition.contrStatus != null and contractQuaryCondition.contrStatus !=''">
+            AND m.CONTR_STATUS = #{contractQuaryCondition.contrStatus}
+        </if>
+       <if test="contractQuaryCondition.contrStartdt != null">
+            AND m.CONTR_STARTDT >= #{contractQuaryCondition.contrStartdt}
+        </if>
+        <if test="contractQuaryCondition.contrEnddt != null">
+            AND m.CONTR_ENDDT &lt;= #{contractQuaryCondition.contrEnddt}
+        </if>
+        
+    </where>
+    AND m.CONTR_DELFLG = 0
+    ORDER BY 
+        m.CONTR_NO ASC 
+    LIMIT 
+        #{startIndex}, #{limit} 
+</select>
+
+<!-- 概览查询条数 -->
+<select id="selectContrGeneralNum" resultType="int">
+    SELECT 
+        COUNT(*) 
     FROM 
         cust_tbl c 
     JOIN 
@@ -106,46 +148,7 @@
         <if test="contractQuaryCondition.contrStatus != null and contractQuaryCondition.contrStatus !=''">
             AND m.CONTR_STATUS = #{contractQuaryCondition.contrStatus,jdbcType=VARCHAR}
         </if>
-       <if test="contractQuaryCondition.contrStartdt != null and contractQuaryCondition.contrStartdt !=''">
-            AND m.CONTR_STARTDT >= #{contractQuaryCondition.contrStartdt,jdbcType=TIMESTAMP}
-        </if>
-        <if test="contractQuaryCondition.contrEnddt != null and contractQuaryCondition.contrEnddt !=''">
-            AND m.CONTR_ENDDT &lt;= #{contractQuaryCondition.contrEnddt,jdbcType=TIMESTAMP}
-        </if>
-        
-    </where>
-    AND m.CONTR_DELFLG = 0
-    ORDER BY 
-        m.CONTR_STARTDT ASC 
-    LIMIT 
-        #{startIndex}, #{limit} 
-</select>
-
-<!-- 概览查询条数 -->
-<select id="selectContrGeneralNum" resultType="int">
-    SELECT 
-        COUNT(*) 
-    FROM 
-        cust_tbl c 
-    JOIN 
-        CONTRACT_TBL m ON c.CUST_ID = m.CONTR_CUST_ID
-    <where>
-        <if test="contractQuaryCondition.quotDelflg != null">
-            AND m.QUOT_DELFLG = #{contractQuaryCondition.quotDelflg,jdbcType=VARCHAR}
-        </if>
-        <if test="contractQuaryCondition.custNm != null">
-            AND c.CUST_NM LIKE CONCAT('%', #{contractQuaryCondition.custNm}, '%')
-        </if>
-        <if test="contractQuaryCondition.contrEngineerNm != null">
-            AND m.CONTR_ENGINEER_NM LIKE CONCAT('%', #{contractQuaryCondition.contrEngineerNm}, '%')
-        </if>
-        <if test="contractQuaryCondition.contrProjectNm != null">
-            AND m.CONTR_PROJECT_NM LIKE CONCAT('%', #{contractQuaryCondition.contrProjectNm}, '%')
-        </if>
-        <if test="contractQuaryCondition.contrStatus != null">
-            AND m.CONTR_STATUS = #{contractQuaryCondition.contrStatus,jdbcType=VARCHAR}
-        </if>
-        <if test="contractQuaryCondition.contrStartdt != null">
+       <if test="contractQuaryCondition.contrStartdt != null">
             AND m.CONTR_STARTDT >= #{contractQuaryCondition.contrStartdt,jdbcType=TIMESTAMP}
         </if>
         <if test="contractQuaryCondition.contrEnddt != null">
@@ -166,10 +169,12 @@
         and CONTR_DELFLG = 0
 </select>
 
+
 <!-- ID查询contr及oper -->
 <select id="selectContrOperById" resultMap="ContrOperResultMap">
     select 
-        *
+        o.*,
+        m.*
     from  
         M_OPERATE_TBL o 
     JOIN 
@@ -188,6 +193,11 @@
     where 
         CONTR_NO = #{contrNo,jdbcType=VARCHAR}
 </delete>
+
+<select id="selectTest" resultType="java.lang.String">
+    SELECT CONTR_PROJECT_NM FROM CONTRACT_TBL WHERE CONTR_NO = #{contrNo}
+</select>
+
  
  <!--单独新增-->
   <insert id="insertContr" parameterType="com.itec.pojo.Contract">

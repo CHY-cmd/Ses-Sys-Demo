@@ -28,8 +28,8 @@
                                 <v-row>
                                     <v-col cols="3" style="background-color: rgb(217, 217, 217);margin: 0px;"><span
                                             style="color: brown;">社員番号</span></v-col>
-                                    <v-col cols="8"><input v-model="staff.staffNo" type="text" required readonly placeholder="自動入力"
-                                            class="custom-input"></v-col>
+                                    <v-col cols="8"><input v-model="staff.staffNo" type="text" required readonly
+                                            placeholder="自動入力" class="custom-input"></v-col>
                                 </v-row>
                                 <v-row>
                                     <v-col cols="3" style="background-color: rgb(217, 217, 217);"><span
@@ -86,8 +86,8 @@
                                 <v-row>
                                     <v-col cols="2" style="background-color:rgb(217, 217, 217);"><span
                                             style="color: brown;">年齢</span></v-col>
-                                    <v-col cols="3"><input readonly v-model="staff.staffAge" placeholder="自動入力" style="display: flex"
-                                            class="custom-input"></v-col>
+                                    <v-col cols="3"><input readonly v-model="staff.staffAge" placeholder="自動入力"
+                                            style="display: flex" class="custom-input"></v-col>
                                     <v-col cols="2" style="max-width: 15%;"><span
                                             style="color: brown;">生年月日</span></v-col>
                                     <v-col cols="3">
@@ -95,8 +95,8 @@
                                             transition="scale-transition" style="position: absolute;left:70%;top: 40%;">
                                             <template v-slot:activator="{ attrs }">
                                                 <div class="d-flex align-center input-with-icon">
-                                                    <input v-model="formattedDates.date1" class="custom-input" 
-                                                    @click="toggleMenu(1)" type="text" v-bind="attrs" />
+                                                    <input v-model="formattedDates.date1" class="custom-input"
+                                                        @click="toggleMenu(1)" type="text" v-bind="attrs" />
                                                     <v-icon :color="menus.menu1 ? 'error' : 'primary'"
                                                         @click="toggleMenu(1)">
                                                         {{ menus.menu1 ? 'mdi-close' : 'mdi-calendar' }}
@@ -434,8 +434,8 @@ export default {
                 { label: 'テスト', value: 'テスト' },
             ],
             selectedSpecialty: [],
-            dailyNumber: 1, // 每日编号
-            lastResetDate: null, // 上次重置日期
+            dailyNumber: 0, // 每日编号
+            lastCalculatedDate: '', // 用于存储上一次计算合同编号的日期
         }
     },
     computed: {
@@ -477,11 +477,9 @@ export default {
     },
     mounted() {
         this.selectStaffById(this.$route.params.staffId);
-        this.resetDailyNumber();
     },
     created() {
         this.selectStaffById(this.$route.params.staffId);
-        this.resetDailyNumber();
     },
     methods: {
         //通过id查询并回显
@@ -678,9 +676,14 @@ export default {
                 const year = indt.getFullYear();
                 const month = String(indt.getMonth() + 1).padStart(2, '0');
                 const day = String(indt.getDate()).padStart(2, '0');
+                // 检查是否是新的一天
+                if (this.lastCalculatedDate !== currentDate) {
+                    this.dailyNumber = 0; // 重置dailyNumber
+                    this.lastCalculatedDate = currentDate; // 更新最后计算日期
+                }
                 // 获取并递增每日编号
                 const dailyNumber = String(this.dailyNumber).padStart(2, '0');
-                this.dailyNumber = (this.dailyNumber % 99) + 1;
+                this.dailyNumber = (this.dailyNumber + 1) % 100;
                 this.staff.staffNo = `ITEC-${year}${month}${day}${dailyNumber}`;
             } else {
                 this.staff.staffNo = '';
@@ -699,14 +702,6 @@ export default {
             }
         },
 
-        resetDailyNumber() {
-            const now = new Date();
-            const currentDate = now.toISOString().split('T')[0];
-            if (this.lastResetDate !== currentDate) {
-                this.dailyNumber = 1;
-                this.lastResetDate = currentDate;
-            }
-        },
 
         //路由
         toList() {

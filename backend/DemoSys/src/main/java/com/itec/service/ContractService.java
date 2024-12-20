@@ -1,8 +1,8 @@
 package com.itec.service;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
+import com.itec.pojo.Contract;
 import com.itec.pojo.vo.ContractQuaryCondition;
 import com.itec.pojo.vo.R;
 
@@ -15,5 +15,13 @@ public interface ContractService {
 	R selectContrOperById(String contrNo);
 
 	// 逻辑删除
-	R deleteContrById(@Param("contrNo") String contrNo);
+	R deleteContrById(String contrNo);
+
+	// 单独更新合同
+	int updateContrById(Contract contract);
+
+	// 单独添加合同
+	int insertContr(Contract contract);
+
+	R selectTest(String contrNo);
 }

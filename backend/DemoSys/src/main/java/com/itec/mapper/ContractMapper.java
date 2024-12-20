@@ -23,4 +23,13 @@ public interface ContractMapper {
 
 	// 逻辑删除
 	int deleteContrById(@Param("contrNo") String contrNo);
+
+	// 单独更新合同
+	int updateContrById(Contract contract);
+
+	// 单独添加合同
+	int insertContr(Contract contract);
+
+	// 测试
+	List<Contract> selectTest(@Param("contrNo") String contrNo);
 }

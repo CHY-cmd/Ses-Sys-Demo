@@ -4,7 +4,7 @@
             <div>
                 <div>
                     <v-app-bar :elevation="1" style="background-color: rgb(0, 114, 159);height: 64px">
-                        <v-app-bar-title style="font-size: 30px;color: aliceblue" class="d-flex align-center">契約情報
+                        <v-app-bar-title style="font-size: 30px;color: aliceblue" class="d-flex align-center">契約情報(SES)
                         </v-app-bar-title>
                         <div style="color: aliceblue;">{{ username }}</div>
                     </v-app-bar>
@@ -29,12 +29,14 @@
                                 <v-col cols="3"
                                     style="background-color: rgb(217, 217, 217);margin: 0px;"><span>契約番号</span>
                                     <span style="color:brown;font-size: 20px;">*</span></v-col>
-                                <v-col cols="8"><input v-model="a" type="text" required class="custom-input"></v-col>
+                                <v-col cols="8"><input v-model="contrOperRequest.contract.contrNo" type="text" required
+                                        class="custom-input" placeholder="自動入力" readonly></v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="3" style="background-color: rgb(217, 217, 217);"><span>取引先名</span>
                                     <span style="color:brown;font-size: 20px;">*</span></v-col>
-                                <v-col cols="8"><input v-model="a" type="text" class="custom-input">
+                                <v-col cols="8"><input v-model="displayCustNm" type="text" class="custom-input"
+                                        readonly>
                                     <v-btn style="width: 40px;height: 30px;" class="btn" @click="openCust()">検索</v-btn>
                                     <v-dialog v-model="openCustDialog" max-width="1100">
                                         <v-card>
@@ -47,16 +49,17 @@
                                                                 style="color: white;background-color: green;">選択</v-btn>
                                                         </td>
                                                         <td>{{ item.custNm }}</td>
-                                                        <td>{{ item.custKn }}</td>
                                                         <td>{{ item.custPhone }}</td>
                                                         <td>{{ item.custAddress }}</td>
                                                         <td>{{ item.custType }}</td>
+                                                        <td>{{ item.custGetdt }}</td>
+                                                        <td>{{ item.custGetcdt }}</td>
                                                     </tr>
                                                 </template>
                                             </v-data-table>
                                             <v-card-actions>
                                                 <v-spacer></v-spacer>
-                                                <v-btn text @click="openCustDialog = false" class="btn">キャンセル</v-btn>
+                                                <v-btn @click="openCustDialog = false" class="btn">キャンセル</v-btn>
                                             </v-card-actions>
                                         </v-card>
                                     </v-dialog>
@@ -64,20 +67,23 @@
                             </v-row>
                             <v-row>
                                 <v-col cols="3" style="background-color:rgb(217, 217, 217);"><span>件名</span></v-col>
-                                <v-col cols="8"><input v-model="a" type="text" class="custom-input"></v-col>
+                                <v-col cols="8"><input v-model="contrOperRequest.contract.contrProjectNm" type="text"
+                                        class="custom-input"></v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="3" style="background-color:rgb(217, 217, 217);"><span>金額小計</span></v-col>
-                                <v-col cols="8"><input v-model="a" type="text" class="custom-input"></v-col>
+                                <v-col cols="8"><input v-model="contrOperRequest.contract.contrAmountSubtotal"
+                                        type="text" class="custom-input" placeholder="自動計算" readonly></v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="3" style="background-color:rgb(217, 217, 217);"><span>消費税</span></v-col>
-                                <v-col cols="8"><input v-model="a" type="text" class="custom-input"
-                                        @input="getAddress"></v-col>
+                                <v-col cols="8"><input v-model="contrOperRequest.contract.consumptionTax" type="text"
+                                        class="custom-input" @input="getAddress" placeholder="自動計算" readonly> </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="3" style="background-color:rgb(217, 217, 217);"><span>金額合計</span></v-col>
-                                <v-col cols="8"><input v-model="a" type="text" class="custom-input"></v-col>
+                                <v-col cols="8"><input v-model="contrOperRequest.contract.totalAmount" type="text"
+                                        class="custom-input" placeholder="自動計算" readonly></v-col>
                             </v-row>
                         </v-col>
                         <v-col cols="5">
@@ -86,7 +92,7 @@
                                     <span style="color:brown;font-size: 20px;">*</span></v-col>
                                 <v-col>
                                     <v-menu ref="menu1" v-model="menus.menu1" :close-on-content-click="false"
-                                        transition="scale-transition" style="position: absolute;left:60%;top: 30%;">
+                                        transition="scale-transition" style="position: absolute;left:70%;top: 40%;">
                                         <template v-slot:activator="{ attrs }">
                                             <div class="d-flex align-center input-with-icon">
                                                 <input v-model="formattedDates.date1" class="custom-input"
@@ -97,41 +103,60 @@
                                                 </v-icon>
                                             </div>
                                         </template>
-                                        <v-date-picker v-model="a" @input="handleDateInput(1)"></v-date-picker>
+                                        <v-date-picker v-model="contrOperRequest.contract.contrStartdt"
+                                            @input="handleDateInput(1)"></v-date-picker>
                                     </v-menu>
                                 </v-col>
-                                <span style="font-size: x-large;align-content: center;margin-bottom: 5%;">~</span>
+                                <span style="font-size: x-large;align-content: center;">~</span>
                                 <v-col>
                                     <v-menu ref="menu2" v-model="menus.menu2" :close-on-content-click="false"
-                                        transition="scale-transition" style="position: absolute;left:70%;top: 30%;">
+                                        transition="scale-transition" style="position: absolute;left:70%;top: 40%;">
                                         <template v-slot:activator="{ attrs }">
                                             <div class="d-flex align-center input-with-icon">
-                                                <input v-model="formattedDates.date2" type="text" class="custom-input"
-                                                    readonly @click="toggleMenu(2)" v-bind="attrs" />
-                                                <v-icon :color="menu ? 'error' : 'primary'" @click="toggleMenu(2)">
-                                                    {{ menu ? 'mdi-close' : 'mdi-calendar' }}
+                                                <input v-model="formattedDates.date2" class="custom-input"
+                                                    @click="toggleMenu(2)" type="text" v-bind="attrs" />
+                                                <v-icon :color="menus.menu2 ? 'error' : 'primary'"
+                                                    @click="toggleMenu(2)">
+                                                    {{ menus.menu2 ? 'mdi-close' : 'mdi-calendar' }}
                                                 </v-icon>
                                             </div>
                                         </template>
-                                        <v-date-picker v-model="a" @input="handleDateInput(2)"></v-date-picker>
+                                        <v-date-picker v-model="contrOperRequest.contract.contrEnddt"></v-date-picker>
                                     </v-menu>
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="3"
                                     style="background-color:rgb(217, 217, 217);"><span>契約ステータス</span></v-col>
-                                <v-col cols="5">
-                                    <select v-model="a" id="staOptions" class="custom-select">
+                                <v-col cols="6">
+                                    <select v-model="contrOperRequest.contract.contrStatus" id="staOptions"
+                                        class="custom-select">
                                         <option value="1">契約中</option>
                                         <option value="2">契約終了</option>
                                         <option value="3">契約予定</option>
                                     </select></v-col>
                             </v-row>
+                            <v-row>
+                                <v-col cols="3" style="background-color:rgb(217, 217, 217);"><span>基準時間</span></v-col>
+                                <v-col cols="2"><input v-model="contrOperRequest.contract.contrLowerLimit" type="text"
+                                        class="custom-input"></v-col>
+                                <span style="font-size: x-large;align-content: center;">~</span>
+                                <v-col cols="2"><input v-model="contrOperRequest.contract.contrUpperLimit" type="text"
+                                        class="custom-input"></v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="3" style="background-color:rgb(217, 217, 217);"><span>入金日</span></v-col>
+                                <v-col cols="2"><input v-model="custList.custGetdt" type="text" class="custom-input"
+                                        placeholder="自動入力" readonly></v-col>
+                                <span style="font-size: x-large;align-content: center;margin-bottom: 5%;"></span>
+                                <v-col cols="3"><input v-model="custList.custGetcdt" type="text" class="custom-input"
+                                        placeholder="自動入力" readonly></v-col>
+                            </v-row>
                         </v-col>
                     </v-row>
                     <v-row>
                         <v-col cols="1"><span>備考</span></v-col>
-                        <v-col style="margin-left: 2%;"><textarea v-model="a"
+                        <v-col style="margin-left: 2%;"><textarea v-model="contrOperRequest.contract.contrRmk"
                                 class="custom-textarea"></textarea></v-col>
                         <v-col></v-col>
                     </v-row>
@@ -143,95 +168,137 @@
                     <p style="font-size: 24px;margin-left: 0px;margin-top: 0px;font-weight: bold;">詳細情報</p>
                 </v-container>
             </div>
-            <div style="background-color:rgb(242, 242, 242) ;">
-                <v-table fluid>
-                    <v-row style="height: 50px;margin-bottom: 15px;"></v-row>
-                    <v-row style="height: 50px;">
-                        <v-col><v-btn class="btn" @click="addRow">行追加</v-btn></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>No.</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>技術者名</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>契約単価</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>仕入単価</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>稼働開始日</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>稼働ステータス</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>下限（H）</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>上限（H）</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>精算方法</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>控除単価</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>超過単価</span></v-col>
-                        <v-col class="d-flex justify-center align-center"><span>備考</span></v-col>
-                    </v-row>
-                    <v-row>
-                        <hr style="width: auto;margin: 20px;">
-                    </v-row>
-                    <v-row v-for="(row, index) in a" :key="index" style="margin-left: 18px;">
-                        <v-col>{{ index + 1 }}</v-col>
-                        <v-col><input v-model="row.a" class="custom-input"></v-col>
-                        <v-col><input v-model="row.a" class="custom-input"></v-col>
-                        <v-col><input v-model="row.a" class="custom-input"></v-col>
-                        <v-col>
-                            <v-menu ref="menu3" v-model="menus.menu3" :close-on-content-click="false"
-                                transition="scale-transition" offset-y min-width="auto">
-                                <template v-slot:activator="{ attrs }">
-                                    <div class="d-flex align-center input-with-icon">
-                                        <input v-model="formattedDates.date3" type="text" class="custom-input" readonly
-                                            @click="toggleMenu(3)" v-bind="attrs" />
-                                        <v-icon :color="menu ? 'error' : 'primary'" @click="toggleMenu(3)">
-                                            {{ menu ? 'mdi-close' : 'mdi-calendar' }}
-                                        </v-icon>
-                                    </div>
-                                </template>
-                                <v-date-picker v-model="a" @input="handleDateInput(3)"></v-date-picker>
-                            </v-menu>
-                        </v-col>
-                        <v-col><select v-model="row.a" id="options" class="custom-select">
-                                <option value="1">稼働中</option>
-                                <option value="2">稼働予定</option>
-                                <option value="3">終了予定</option>
-                                <option value="4">契約終了</option>
-                            </select></v-col>
-                        <v-col><input v-model="row.a" class="custom-input"></v-col>
-                        <v-col><input v-model="row.a" class="custom-input"></v-col>
-                        <v-col><select v-model="row.a" id="options" class="custom-select">
-                                <option value="1">切捨て(10円)</option>
-                                <option value="2">切捨て(100円)</option>
-                                <option value="3">切上げ(10円)</option>
-                                <option value="4">切上げ(100円)</option>
-                            </select></v-col>
-                        <v-col><input v-model="row.a" class="custom-input" readonly placeholder="自動入力"></v-col>
-                        <v-col><input v-model="row.a" class="custom-input" readonly placeholder="自動入力"></v-col>
-                        <v-col><v-btn class="btn" @click="delRow(index)">X</v-btn></v-col>
-                    </v-row>
+            <div style="background-color: rgb(242, 242, 242); overflow-x: auto; max-width: 100%; display: block;">
+                <v-table style="width: auto; min-width: 100%;">
+                    <thead>
+                        <tr style="height: 50px; margin-bottom: 15px;">
+                            <th><v-btn class="btn" @click="addRow">行追加</v-btn></th>
+                            <th>No.</th>
+                            <th class="custom-tb">技術者名</th>
+                            <th class="custom-tb">契約単価</th>
+                            <th class="custom-tb">仕入単価</th>
+                            <th class="custom-tb">稼働開始日</th>
+                            <th class="custom-tb">稼働ステータス</th>
+                            <th class="custom-tb">下限（H）</th>
+                            <th class="custom-tb">上限（H）</th>
+                            <th class="custom-tb">精算方法</th>
+                            <th class="custom-tb">控除単価</th>
+                            <th class="custom-tb">超過単価</th>
+                            <th class="custom-tb">備考</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(row, index) in contrOperRequest.operates" :key="index">
+                            <td></td>
+                            <td>{{ index + 1 }}</td>
+                            <td>
+                                <input v-model="row.operEngineerNm" class="custom-input">
+                                <v-icon color="blue-darken-2" icon="mdi-card-search" size="large"
+                                    @click="openStaff(index)"></v-icon>
+                            </td>
+                            <td><input v-model="row.operPricePer" class="custom-input"></td>
+                            <td><input v-model="row.operPurchasePrice" class="custom-input"></td>
+                            <td>
+                                <v-menu ref="`menuOperStartdt-${index}`" v-model="row.menuOperStartdt"
+                                    :close-on-content-click="false" transition="scale-transition"
+                                    style="position: absolute;left:25%;top: 55%;" min-width="auto">
+                                    <template v-slot:activator="{ props }">
+                                        <div class="input-with-icon">
+                                            <input v-model="row.formattedOperStartdt" type="text" class="custom-input"
+                                                readonly @click="toggleOperMenu(row)" v-bind="props" />
+                                            <v-icon :color="row.menuOperStartdt ? 'error' : 'primary'"
+                                                @click="toggleOperMenu(row)">
+                                                {{ row.menuOperStartdt ? 'mdi-close' : 'mdi-calendar' }}
+                                            </v-icon>
+                                        </div>
+                                    </template>
+                                    <v-date-picker v-model="row.operStartdt"></v-date-picker>
+                                </v-menu>
+                            </td>
+                            <td>
+                                <select v-model="row.operStatus" id="options" class="custom-select">
+                                    <option value="1">稼働中</option>
+                                    <option value="2">稼働予定</option>
+                                    <option value="3">終了予定</option>
+                                    <option value="4">契約終了</option>
+                                </select>
+                            </td>
+                            <td><input v-model="row.operLowerLimit" class="custom-input"></td>
+                            <td><input v-model="row.operUpperLimit" class="custom-input"></td>
+                            <td>
+                                <select v-model="row.operSettlementUnit" id="options" class="custom-select">
+                                    <option value="1">切捨て(10円)</option>
+                                    <option value="2">切捨て(100円)</option>
+                                    <option value="3">切上げ(10円)</option>
+                                    <option value="4">切上げ(100円)</option>
+                                </select>
+                            </td>
+                            <td><input v-model="row.operDeductionUnitprice" class="custom-input" readonly
+                                    placeholder="自動入力"></td>
+                            <td><input v-model="row.operExcessUnitprice" class="custom-input" readonly
+                                    placeholder="自動入力"></td>
+                            <td><input v-model="row.operRmk" class="custom-input"></td>
+                            <td><v-btn class="btn" @click="delRow(index)">X</v-btn></td>
+                        </tr>
+                    </tbody>
                 </v-table>
             </div>
             <v-row align="center" justify="center">
                 <v-col cols="2">
                     <span>作成者：</span>
-                    {{ a }}
+                    {{ contrOperRequest.contract.contrCrdUsr }}
                 </v-col>
                 <v-col cols="2">
                     <span>作成日:</span>
-                    {{ formatDate(a) }}
+                    {{ formatDate(contrOperRequest.contract.contrCrdDt) }}
                 </v-col>
                 <v-col cols="2">
                     <span>更新者:</span>
-                    {{ a }}
+                    {{ contrOperRequest.contract.contrUpdUsr }}
                 </v-col>
                 <v-col cols="2">
                     <span>更新日:</span>
-                    {{ formatDate(a) }}
+                    {{ formatDate(contrOperRequest.contract.contrUpdDt) }}
                 </v-col>
             </v-row>
 
             <v-snackbar v-model="snackbar.show" :timeout="snackbar.timeout" :color="snackbar.color" top>
                 {{ snackbar.message }}
             </v-snackbar>
+
+            <!-- 员工对话框 -->
+            <v-dialog v-model="openStaffDialog" max-width="1100">
+                <v-card>
+                    <v-card-title>スタッフ情報</v-card-title>
+                    <hr>
+                    <v-data-table :headers="staffHeaders" :items="staffList" item-key="id">
+                        <template v-slot:item="{ item }">
+                            <tr>
+                                <td><v-btn text @click="fillStaff(selectedRowIndex, item)"
+                                        style="color: white;background-color: green;">選択</v-btn>
+                                </td>
+                                <td>{{ item.staffNm }}</td>
+                                <td>{{ item.staffSex }}</td>
+                                <td>{{ item.staffCls }}</td>
+                                <td>{{ item.staffNeareststation }}</td>
+                                <td>{{ item.staffSalesstatus }}</td>
+                            </tr>
+                        </template></v-data-table><v-card-actions><v-spacer></v-spacer>
+                        <v-btn @click="openStaffDialog = false" class="btn">キャンセル</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </navigation-drawer>
     </v-app>
 </template>
 <script>
 import NavigationDrawer from "@/components/NavigationDrawer.vue";
 import CustInfoListApi from "@/api/CustInfoList";
+import CustInfoAddApi from "@/api/CustinfoAdd";
+import StaffInfoListApi from "@/api/Staff";
+import ContractApi from "@/api/Contract";
+import moment from 'moment';
 
 export default {
     name: 'ContrSesAdd',
@@ -244,14 +311,29 @@ export default {
     },
     data() {
         return {
-            a: null, startDate: null, endDate: null, operStartDate: null,
-
+            contrOperRequest: {
+                contract: {
+                    contrNo: '', contrCustId: '', contrEngineerNm: '', contrProjectNm: 'システム開発支援', quotDelflg: '1', contrStartdt: null, contrEnddt: null, contrStatus: '',
+                    contrRmk: '', contrPricePer: '', purchasePrice: '', excessUnitprice: '', deduUnitprice: '',
+                    settlementUnit: '', contrUpperLimit: '', contrLowerLimit: '', contrAmountSubtotal: '', consumptionTax: '', totalAmount: '',
+                    contrCrdUsr: this.$store.state.username, contrUpdUsr: this.$store.state.username, contrCrdDt: null, contrUpdDt: null,
+                },
+                operates: [{
+                    operEngineerNm: '', operPricePer: '', operPurchasePrice: '', operStartdt: null, operEnddt: null, operStatus: '',
+                    operExcessUnitprice: '', operDeductionUnitprice: '', operSettlementUnit: '', operUpperLimit: '', operLowerLimit: '', operRmk: '',
+                    operCrdUsr: this.$store.state.username, operUpdUsr: this.$store.state.username, operCrdDt: null, operUpdDt: null, isNew: false, operNo: '', menuOperStartdt: false, formattedOperStartdt: ''
+                }],
+            },
+            displayCustNm: '',
             custList: [],
+            staffList: [],
+            custDetail: [],
             menuStart: false,
             menuStart2: false,
             menuEnd: false,
             menu: false,
             openCustDialog: false,
+            openStaffDialog: false,
             snackbar: {
                 show: false,
                 message: '',
@@ -261,69 +343,270 @@ export default {
             custHeaders: [
                 { title: '選択', sortable: false },
                 { title: '取引先名', key: 'custNm', sortable: true },
-                { title: 'カナ', key: 'custKn', sortable: true },
                 { title: '電話番号', key: 'custPhone', sortable: true },
                 { title: '住所', key: 'custAddress', sortable: true },
                 { title: '取引先種別', key: 'custType', sortable: true },
+                { title: '入金日', key: 'custGetdt', sortable: true },
+                { title: '入金日', key: 'custGetcdt', sortable: true }
+            ],
+            staffHeaders: [
+                { title: '選択', sortable: false },
+                { title: '氏名', key: 'staffNm', sortable: true },
+                { title: '性別：', key: 'staffSex', sortable: true },
+                { title: 'スタッフ区分', key: 'staffCls', sortable: true },
+                { title: '最寄駅', key: 'staffNeareststation', sortable: true },
+                { title: '営業ステータス', key: 'staffSalesstatus', sortable: true },
             ],
             formattedDates: {
-                date1: '',
-                date2: '',
-                date3: '',
+                date1: '', date2: ''
             },
             menus: {
-                menu1: false,
-                menu2: false,
-                menu3: false,
+                menu1: false, menu2: false,
             },
+            dailyNumber: 1, // 每日编号
+            lastCalculatedDate: '', // 上次重置日期
+            selectedRowIndex: -1,
         }
     },
     computed: {
         username() {
             return this.$store.state.username;
         },
-
+        contrAmountSubtotal() {
+            // 自动计算
+            let total = 0;
+            this.contrOperRequest.operates.forEach(operate => {
+                if (operate.operPricePer) {
+                    total += parseFloat(operate.operPricePer);
+                }
+            });
+            return total;
+        },
     },
     watch: {
-        'a': function (newVal) {
+        'contrOperRequest.contract.contrStartdt': function () {
             this.handleDateInput(1);
         },
-        'a': function (newVal) {
+        'contrOperRequest.contract.contrEnddt': function () {
             this.handleDateInput(2);
         },
-        'a': function (newVal) {
-            this.handleDateInput(3);
+        'contrOperRequest.operates': {//监听数组变化
+            handler() {
+                this.updateTotals();
+                this.contrOperRequest.operates.forEach(row => {
+                    this.watchOperStartdt(row);
+                    this.calculateUnitPrices(row);
+                });
+            },
+            deep: true
         },
+        'contrOperRequest.contract.contrLowerLimit': {
+            handler(newVal) {
+                this.updateOperLimits('lower', newVal);
+            },
+            deep: true
+        },
+        'contrOperRequest.contract.contrUpperLimit': {
+            handler(newVal) {
+                this.updateOperLimits('upper', newVal);
+            },
+            deep: true
+        }
     },
     mounted() {
-
+        this.selectContrOperById(this.$route.params.contrNo);
+    },
+    created() {
+        this.selectContrOperById(this.$route.params.contrNo);
     },
     methods: {
+        //通过合同号查询并回显
+        async selectContrOperById() {
+            try {
+                const response = await ContractApi.selectContrOperById(this.$route.params.contrNo);
+                if (response.data.items.length > 0) {
+                    this.contrOperRequest = { ...response.data.items[0], operates: [] };//建立对象结构，所有属性与items相同，并添加一个operates
+                    response.data.items.forEach(item => {
+                        this.contrOperRequest.operates.push(...item.operates);//遍历数据放入item，再从item中提取operates（同时展开其结构属性）并push
+                    });
+                    if (this.contrOperRequest.contract.contrStartdt) {
+                        const dateObj = new Date(this.contrOperRequest.contract.contrStartdt);
+                        if (!isNaN(dateObj.getTime())) {//gettime返回一个时间，判断是否isNaN
+                            this.contrOperRequest.contract.contrStartdt = dateObj;
+                            this.formattedDate = this.formatDate(dateObj);
+                        } else {
+                            console.error('date error', this.contrOperRequest.contract.contrStartdt);
+                        }
+                    };
+                    if (this.contrOperRequest.contract.contrEnddt) {
+                        const dateObj = new Date(this.contrOperRequest.contract.contrEnddt);
+                        if (!isNaN(dateObj.getTime())) {//gettime返回一个时间，判断是否isNaN
+                            this.contrOperRequest.contract.contrEnddt = dateObj;
+                            this.formattedDate = this.formatDate(dateObj);
+                        } else {
+                            console.error('date error', this.contrOperRequest.contract.contrEnddt);
+                        }
+                    };
+                    this.contrOperRequest.operates.forEach((operate, index) => {//批量转化日期
+                        if (operate.operStartdt) {
+                            const dateObj = new Date(operate.operStartdt);
+                            if (!isNaN(dateObj.getTime())) {
+                                operate.operStartdt = dateObj;
+                                operate.formattedOperStartdt = this.formatDate(dateObj);
+                            } else {
+                                console.error('date error', operate.operStartdt);
+                            }
+                        }
+                    });
+                    if (this.contrOperRequest.contract.contrCustId) {
+                        await this.selectCustInfo(this.contrOperRequest.contract.contrCustId);
+                    }
+                }
+            } catch (error) {
+                console.error('Error data:', error);
+            }
+        },
+
+        //通过客户id查信息
+        async selectCustInfo(custId) {
+            try {
+                const response = await CustInfoAddApi.selectDetailByCustId(custId);
+                if (response.data.items.length > 0) {
+                    const custInfo = response.data.items[0].custInfo;
+                    this.displayCustNm = custInfo.custNm;
+                    this.custList.custGetcdt = custInfo.custGetcdt;
+                    this.custList.custGetdt = custInfo.custGetdt;
+                }
+            } catch (error) {
+                console.error('Error fetching customer data:', error);
+            }
+        },
+
+        //判断登录按钮更新or新增
+        async insertOrUpdate() {
+            this.contrOperRequest.contract.quotDelflg='1';//当前页为SES
+            try {
+                if (this.$route.params.contrNo) {
+                    // 更新合同表
+                    await this.updateContr();
+                    // 更新操作表
+                    await this.saveOper();
+                    this.snackbar.show = true;
+                    this.snackbar.message = '更新成功';
+                    this.snackbar.color = 'success';
+                } else {
+                    // 同时新增两表
+                    await this.insertContrOper();
+                    this.dailyNumber = (this.dailyNumber + 1) % 100; // 提交时递增一次编号
+                    this.snackbar.show = true;
+                    this.snackbar.message = '登録成功';
+                    this.snackbar.color = 'success';
+                }
+                // 所有操作完成后刷新页面
+                window.location.reload();
+            } catch (error) {
+                this.snackbar.show = true;
+                this.snackbar.message = '操作エラー';
+                this.snackbar.color = 'error';
+            }
+        },
+
+        //同时新增两表
+        async insertContrOper() {
+            await ContractApi.insertContrOper(this.contrOperRequest)
+        },
+
+        //单独更新合同表
+        async updateContr() {
+            await ContractApi.updateContr(this.contrOperRequest.contract)
+        },
+
+        //根据增减行判断部分增行新增修改
+        async saveOper() {
+            const updateOperRows = this.contrOperRequest.operates.filter(row => !row.isNew);
+            const newOperRows = this.contrOperRequest.operates.filter(row => row.isNew);
+            const operNo = this.$route.params.operNo;
+
+            if (updateOperRows.length > 0) {
+                await this.updateOper(updateOperRows);
+            }
+            if (newOperRows.length > 0) {
+                newOperRows.forEach(row => { row.operNo = operNo; });
+                await this.insertOper(operNo, newOperRows);
+            }
+        },
+
+        //经理单独新增
+        async insertOper(operNo, newOperRows) {
+            await ContractApi.insertOper(operNo, newOperRows)
+                .then(response => {
+                    newOperRows.forEach(row => row.isNew = false);
+                    console.log('insertOper success', response);
+                })
+                .catch(error => {
+                    console.error('insertOper error', error);
+                });
+        },
+
+
+        //经理单独更新
+        async updateOper() {
+            await ContractApi.updateOper(this.contrOperRequest.operates).then(response => {
+                console.log('updateMang success', response);
+            })
+                .catch(error => {
+                    console.error('updateMang error', error);
+                });
+        },
 
         //增减行并标记
         addRow() {
-            push({
-                a: '',
-                a: '',
-                a: '',
-                a: '',
-                a: '',
+            this.contrOperRequest.operates.push({
+                operEngineerNm: '',
+                operPricePer: '',
+                operPurchasePrice: '',
+                operStartdt: null,
+                operStatus: '',
+                operLowerLimit: this.contrOperRequest.contract.contrLowerLimit,
+                operUpperLimit: this.contrOperRequest.contract.contrUpperLimit,
+                operSettlementUnit: '',
+                operDeductionUnitprice: '',
+                operExcessUnitprice: '',
+                operRmk: '',
                 isNew: true
             });
         },
         delRow(index) {
-            if (this.a.length > 1) {
-                this.a.splice(index, 1);//删除index位置的1个元素
+            if (this.contrOperRequest.operates.length > 1) {
+                this.contrOperRequest.operates.splice(index, 1);//删除index位置的1个元素
             } else {
-                this.a[0] = {
-                    a: '',
-                    a: '',
-                    a: '',
-                    a: '',
-                    a: '',
+                this.contrOperRequest.operates[0] = {
+                    operEngineerNm: '',
+                    operPricePer: '',
+                    operPurchasePrice: '',
+                    operStartdt: null,
+                    operStatus: '',
+                    operLowerLimit: '',
+                    operUpperLimit: '',
+                    operSettlementUnit: '',
+                    operDeductionUnitprice: '',
+                    operExcessUnitprice: '',
+                    operRmk: '',
                     isNew: true
                 };
             }
+        },
+
+        //查询员工信息
+        selectAllStaff() {
+            StaffInfoListApi.selectAllStaff().then(response => {
+                this.staffList = response.data.items;
+            }).catch(error => {
+                console.error(error);
+                this.snackbar.message = 'error';
+                this.snackbar.color = 'red';
+                this.snackbar.show = true;
+            });
         },
 
         //查询客户信息
@@ -343,10 +626,27 @@ export default {
             this.openCustDialog = true;
             this.selectAllCust();
         },
+        openStaff(rowIndex) {
+            console.log("openStaff called with rowIndex:", rowIndex);
+            this.openStaffDialog = true;
+            this.selectedRowIndex = rowIndex;
+            this.selectAllStaff();
+        },
 
         fillCust(rowData) {
-            this.a = rowData.custNm;
+            this.contrOperRequest.contract.contrCustId = rowData.custId;
+            this.displayCustNm = rowData.custNm;
+            this.custList.custGetdt = rowData.custGetdt;
+            this.custList.custGetcdt = rowData.custGetcdt;
             this.openCustDialog = false;
+        },
+
+        fillStaff(rowIndex, rowData) {
+            console.log("fillStaff called with rowIndex:", rowIndex, "rowData:", rowData);
+            if (rowIndex !== -1 && rowData) {
+                this.contrOperRequest.operates[rowIndex].operEngineerNm = rowData.staffNm;
+                this.openStaffDialog = false;
+            }
         },
 
         //格式化日期以显示
@@ -374,21 +674,126 @@ export default {
             return formattedDate;
         },
         handleDateInput(index) {
-            const fieldNames = ['Birthdt', 'Cardenddt', 'Indt', 'Outdt'];
+            const fieldNames = ['Startdt', 'Enddt'];
             const fieldName = fieldNames[index - 1];
-            const selectedDate = this.staff[`staff${fieldName}`];
+            const selectedDate = this.contrOperRequest.contract[`contr${fieldName}`];
             if (selectedDate instanceof Date && !isNaN(selectedDate.getTime())) {
                 const formattedDate = this.formatDate(selectedDate);
                 this.formattedDates[`date${index}`] = formattedDate;
             } else {
                 this.formattedDates[`date${index}`] = '';
-                this.staff[`staff${fieldName}`] = '';
+                this.contrOperRequest.contract[`contr${fieldName}`] = '';
             }
             this.menus[`menu${index}`] = false;
+            if (index === 1) {
+                if (!this.contrOperRequest.contract.contrNo) {//回显时为空则不计算
+                    this.calculateContrNo();
+                }
+            }
         },
+
         //控制日历
         toggleMenu(index) {
             this.menus[`menu${index}`] = !this.menus[`menu${index}`];
+        },
+        toggleOperMenu(row) {
+            row.menuOperStartdt = !row.menuOperStartdt;
+        },
+        //自动计算合同号
+        calculateContrNo() {
+            const indt = new Date(this.contrOperRequest.contract.contrStartdt);
+            if (indt && !isNaN(indt.getTime())) {
+                const year = indt.getFullYear();
+                const month = String(indt.getMonth() + 1).padStart(2, '0');
+                const day = String(indt.getDate()).padStart(2, '0');
+                // 检查是否是新的一天
+                const currentDate = new Date().toISOString().split('T')[0]; // 获取当前日期的 YYYY-MM-DD 格式
+                if (this.lastCalculatedDate !== currentDate) {
+                    this.dailyNumber = 0; // 重置dailyNumber
+                    this.lastCalculatedDate = currentDate; // 更新最后计算日期
+                }
+                // 获取每日编号
+                const dailyNumber = String(this.dailyNumber).padStart(2, '0');
+                this.contrOperRequest.contract.contrNo = `ITEC-${year}-${month}${day}-${dailyNumber}`;
+            } else {
+                this.contrOperRequest.contract.contrNo = '';
+            }
+        },
+        //自动赋值上下限
+        updateOperLimits(type, value) {
+            this.contrOperRequest.operates.forEach(row => {
+                if (type === 'lower') {
+                    row.operLowerLimit = value;
+                } else if (type === 'upper') {
+                    row.operUpperLimit = value;
+                }
+            });
+        },
+
+        //计算总和
+        updateTotals() {
+            let subtotal = 0;
+            let pricePerSum = 0;
+            let purchasePriceSum = 0;
+            this.contrOperRequest.operates.forEach(operate => {
+                if (operate.operPricePer) {
+                    subtotal += parseFloat(operate.operPricePer);
+                    pricePerSum += parseFloat(operate.operPricePer);
+                }
+                if (operate.operPurchasePrice) {
+                    purchasePriceSum += parseFloat(operate.operPurchasePrice);
+                }
+            });
+            this.contrOperRequest.contract.contrAmountSubtotal = subtotal;
+            this.contrOperRequest.contract.consumptionTax = Math.floor(subtotal * 0.1);
+            this.contrOperRequest.contract.totalAmount = Math.floor(subtotal * 1.1);
+            const operatesCount = this.contrOperRequest.operates.length;
+            this.contrOperRequest.contract.contrPricePer = operatesCount > 0 ? pricePerSum / operatesCount : 0;
+            this.contrOperRequest.contract.purchasePrice = operatesCount > 0 ? purchasePriceSum / operatesCount : 0;
+        },
+        //监听数组日期 input不起效
+        watchOperStartdt(row) {
+            this.$watch(
+                () => row.operStartdt,
+                (newVal, oldVal) => {
+                    if (newVal !== oldVal) {
+                        row.formattedOperStartdt = this.formatDate(newVal);
+                        this.toggleOperMenu(row);
+                    }
+                },
+                { deep: true }
+            );
+        },
+
+        //计算超出和控除
+        calculateUnitPrices(row) {
+            if (!row.operPricePer || !row.operLowerLimit || !row.operUpperLimit) {
+                // 数据不完整不进行计算
+                return;
+            }
+            let deductionPrice = row.operPricePer / row.operLowerLimit;
+            let excessPrice = row.operPricePer / row.operUpperLimit;
+            switch (row.operSettlementUnit) {
+                case '1': // 切捨て(10円)
+                    row.operDeductionUnitprice = Math.floor(deductionPrice / 10) * 10;
+                    row.operExcessUnitprice = Math.floor(excessPrice / 10) * 10;
+                    break;
+                case '2': // 切捨て(100円)
+                    row.operDeductionUnitprice = Math.floor(deductionPrice / 100) * 100;
+                    row.operExcessUnitprice = Math.floor(excessPrice / 100) * 100;
+                    break;
+                case '3': // 切上げ(10円)
+                    row.operDeductionUnitprice = Math.ceil(deductionPrice / 10) * 10;
+                    row.operExcessUnitprice = Math.ceil(excessPrice / 10) * 10;
+                    break;
+                case '4': // 切上げ(100円)
+                    row.operDeductionUnitprice = Math.ceil(deductionPrice / 100) * 100;
+                    row.operExcessUnitprice = Math.ceil(excessPrice / 100) * 100;
+                    break;
+                default:
+                    // 结算单位未定义则不进行计算
+                    break;
+            }
         },
 
         //路由
@@ -440,5 +845,22 @@ export default {
     border: 1px black solid;
     border-radius: 6px;
     box-shadow: 2px 2px 2px rgba(62, 62, 62, 0.2);
+}
+
+.custom-tb {
+    text-align: center !important;
+    width: 200px;
+    /* 设置输入框的固定宽度 */
+    min-width: 200px;
+    /* 最小宽度也是200px，防止缩小 */
+    max-width: 200px;
+    /* 最大宽度也是200px，防止扩大 */
+    box-sizing: border-box;
+    /* 边框和内边距包含在宽度内 */
+    white-space: nowrap;
+}
+
+td {
+    text-align: center !important;
 }
 </style>

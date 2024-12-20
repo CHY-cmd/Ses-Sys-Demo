@@ -2,6 +2,8 @@ package com.itec.pojo;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class Contract {
 	private String custNm;
 	/**
@@ -65,6 +67,7 @@ public class Contract {
 	 *
 	 * @mbg.generated Fri Dec 13 14:58:51 HKT 2024
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date contrStartdt;
 
 	/**
@@ -74,6 +77,7 @@ public class Contract {
 	 *
 	 * @mbg.generated Fri Dec 13 14:58:51 HKT 2024
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date contrEnddt;
 
 	/**
@@ -802,6 +806,10 @@ public class Contract {
 
 	public void setCustNm(String custNm) {
 		this.custNm = custNm;
+	}
+
+	public Contract() {
+		super();
 	}
 
 	public Contract(String custNm, String contrNo, Long contrCustId, String contrEngineerNm, String contrProjectNm,

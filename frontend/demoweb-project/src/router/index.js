@@ -15,6 +15,7 @@ import StaffInfoAdd from '../views/StaffInfoAdd.vue'
 import StaffInfoDetail from '../views/StaffInfoDetail.vue'
 import ContrInfoList from '../views/ContrInfoList.vue'
 import ContrSesAdd from '../views/ContrSesAdd.vue'
+import ContrSesDetail from '../views/ContrSesDetail.vue'
 
 const routes = [
   { path: '/', redirect: '/Login' },
@@ -121,7 +122,18 @@ const routes = [
     component: ContrSesAdd,
     meta: { requiresAuth: true, title: '営業管理—契約情報管理'  }
   },
-  
+  {
+    path: '/ContrSesAdd/:contrNo',
+    name: 'ContrSesEdit',
+    component: ContrSesAdd,
+    meta: { requiresAuth: true, title: '営業管理—契約情報管理'  }
+  },
+  {
+    path: '/ContrSesDetail/:contrNo',
+    name: 'ContrSesDetail',
+    component: ContrSesDetail,
+    meta: { requiresAuth: true, title: '営業管理—契約情報詳細'  }
+  },
 ]
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

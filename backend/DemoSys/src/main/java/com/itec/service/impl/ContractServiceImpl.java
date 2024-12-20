@@ -16,7 +16,7 @@ import com.itec.service.ContractService;
 public class ContractServiceImpl implements ContractService {
 
 	@Autowired
-	ContractMapper contractMapper;
+	private ContractMapper contractMapper;
 
 	@Override
 	public R selectContrGeneral(Integer currentPage, Integer limit, ContractQuaryCondition contractQuaryCondition) {
@@ -45,6 +45,22 @@ public class ContractServiceImpl implements ContractService {
 		} else {
 			return R.success().message("削除に失敗しました");
 		}
+	}
+
+	@Override
+	public R selectTest(String contrNo) {
+		List<Contract> selectTest = contractMapper.selectTest(contrNo);
+		return R.success().data("items", selectTest);
+	}
+
+	@Override
+	public int updateContrById(Contract contract) {
+		return contractMapper.updateContrById(contract);
+	}
+
+	@Override
+	public int insertContr(Contract contract) {
+		return contractMapper.insertContr(contract);
 	}
 
 }

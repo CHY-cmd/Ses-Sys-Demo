@@ -20,8 +20,8 @@ public class StaffServiceImpl implements StaffService {
 
 	@Override
 	public R selectAllStaff() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Staff> selectAllStaff = staffMapper.selectAllStaff();
+		return R.success().data("items", selectAllStaff);
 	}
 
 	@Override

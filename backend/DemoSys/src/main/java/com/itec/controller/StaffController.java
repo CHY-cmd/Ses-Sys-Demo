@@ -64,4 +64,10 @@ public class StaffController {
 		return staffService.updateStaffById(staff);
 	}
 
+	// 查询所有
+	@GetMapping("/selectAllStaff")
+	public R selectAllStaff() {
+		return staffService.selectAllStaff();
+	}
+
 }

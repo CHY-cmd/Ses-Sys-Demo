@@ -135,24 +135,28 @@
                                 <!-- 删除编辑修改入口 -->
                                 <td>
                                     <div style="display: flex;margin-top: 5px;margin-bottom: 5px;">
-                                        <v-btn text @click="openUpdateDialog(item.userId)"
-                                            style="width: 70px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255);margin-right: 5px;">編集</v-btn>
-                                        <v-btn text @click="deleteUserByID(item.userId)"
+                                        <router-link :to="'/ContrSesAdd/' + item.contrNo"><v-btn text
+                                                style="width: 70px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255);margin-right: 5px;">編集</v-btn></router-link>
+                                        <v-btn text @click="deleteContrById(item.contrNo)"
                                             style="width: 70px;height: 35px;background-color: rgb(217, 217, 217);color: rgb(255, 255, 255);margin-right: 5px;">削除</v-btn>
-                                    </div>
-                                    <div style="margin-bottom: 5px;"><v-btn text @click="openResetDialog(item.userId)"
-                                            style="width: 145px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255);">レセットバスワード</v-btn>
                                     </div>
                                 </td>
                                 <td style="text-align: center;">{{ (currentPage - 1) * limit + index + 1 }}</td>
-                                <td style="text-align: center;">{{ item.contrNo }}</td>
-                                <td style="text-align: center;">{{ item.custNm }}</td>
-                                <td style="text-align: center;">{{ item.contrProjectNm }}</td>
-                                <td style="text-align: center;">{{ item.contrEngineerNm }}</td>
-                                <td style="text-align: center;">{{ item.contrStatus }}</td>
-                                <td style="text-align: center;">{{ item.contrStartdt }}</td>
-                                <td style="text-align: center;"> {{ item.contrRmk }}</td>
-                                <td style="text-align: center;">{{ item.contrCrdUsr }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.contrNo }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.custNm }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.contrProjectNm
+                                    }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.contrEngineerNm
+                                    }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{
+                                    getContrtatus(item.contrStatus) }}
+                                </td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{
+                                    formatDate(item.contrStartdt) }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo)"> {{ item.contrRmk }}
+                                </td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.contrCrdUsr }}
+                                </td>
                             </tr>
                         </tbody>
                     </v-table>
@@ -214,6 +218,11 @@ export default {
             totalPages: 1,
             pageSize: 10,
             pageSizes: [10, 30, 50],
+            contrStatusMap: {
+                1: '契約中',
+                2: '契約終了',
+                3: '契約予定',
+            },
         }
     },
     computed: {
@@ -263,8 +272,8 @@ export default {
 
         selectContrGeneral() {
             ContractApi.selectContrGeneral(this.currentPage, this.limit, this.contractQuaryCondition).then(response => {
-                this.items = response.data.items;
-                this.totalItems = response.data.itemsNum;
+                this.items = response.data.items || []; //无结果则为空
+                this.totalItems = response.data.itemsNum || 0; //无结果则为0
                 this.totalPages = Math.ceil(this.totalItems / this.pageSize);
                 if (this.items.length === 0) {
                     this.snackbar.show = true;
@@ -285,6 +294,28 @@ export default {
                 });
         },
 
+        //删除
+        deleteContrById(contrNo) {
+            if (window.confirm('削除を確認してください')) {
+                if (contrNo) {
+                    ContractApi.deleteContrById(contrNo)
+                        .then(response => {
+                            this.snackbar.show = true;
+                            this.snackbar.color = 'success';
+                            this.snackbar.message = response.message
+                            this.selectContrGeneral();
+                        })
+                        .catch(response => {
+                            this.snackbar.show = true;
+                            this.snackbar.color = 'error';
+                            this.snackbar.message = response.message
+                        });
+                }
+                else {
+                    console.log('キャンセル');
+                }
+            }
+        },
 
         //格式化日期以显示
         formatDate(date) {
@@ -305,16 +336,25 @@ export default {
         },
 
 
+        getContrtatus(statusId) {
+            return this.contrStatusMap[statusId];
+        },
+
         reset() {
-            this.a = '';
-            this.a = '';
-            this.a = '';
-            this.startDate = null;
-            this.endDate = null;
+            this.contractQuaryCondition.custNm = '';
+            this.contractQuaryCondition.contrEngineerNm = '';
+            this.contractQuaryCondition.contrProjectNm = '';
+            this.contractQuaryCondition.contrStatus = '';
+            this.contractQuaryCondition.quotDelflg = '';
+            this.contractQuaryCondition.contrStartdt = null;
+            this.contractQuaryCondition.contrEnddt = null;
         },
         //路由
         toSesAdd() {
             this.$router.push('/ContrSesAdd');
+        },
+        toDetail(contrNo) {
+            this.$router.push({ path: `/ContrSesDetail/${contrNo}` });
         }
     }
 };
@@ -381,5 +421,9 @@ export default {
     height: 30px;
     font-size: 14px;
     text-align: center;
+}
+
+td {
+    cursor: pointer;
 }
 </style>

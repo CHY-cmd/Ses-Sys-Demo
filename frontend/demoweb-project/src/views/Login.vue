@@ -18,7 +18,7 @@
                             <v-form ref="loginForm" v-model="valid" lazy-validation>
                                 <v-text-field v-model="loginForm.userMailaddress" :rules="usernameRules" label="ユーザーID"
                                     type="email" required></v-text-field>
-                                <v-text-field v-model="loginForm.userPwd" :rules="passwordRules" label="パスワード"
+                                <v-text-field @keyup.native.enter="handleLogin" v-model="loginForm.userPwd" :rules="passwordRules" label="パスワード"
                                     type="password" required></v-text-field>
                             </v-form>
                         </v-card-text>

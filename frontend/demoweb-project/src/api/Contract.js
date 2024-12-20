@@ -31,7 +31,7 @@ export default {
     return request({
       url: `${BASE_URL}/contract/selectContrOperById/${contrNo}`,
       method: "get",
-     ...getAuthConfig(),
+      ...getAuthConfig(),
     });
   },
 
@@ -45,22 +45,42 @@ export default {
   },
 
   //新增
-//   insertStaff(staff) {
-//     return request({
-//       url: `${BASE_URL}/staff/insertStaff`,
-//       method: "post",
-//       data: staff,
-//       ...getAuthConfig(),
-//     });
-//   },
+  insertContrOper(contrOperRequest) {
+    return request({
+      url: `${BASE_URL}/contract/insertContrOper`,
+      method: "post",
+      data: contrOperRequest,
+      ...getAuthConfig(),
+    });
+  },
 
-  //更新
-//   updateStaffById(staff) {
-//     return request({
-//       url: `${BASE_URL}/staff/updateStaffById`,
-//       method: "put",
-//       data: staff,
-//       ...getAuthConfig(),
-//     });
-//   },
+  //单独新增工程师
+  insertOper(operNo, operate) {
+    return request({
+      url: `${BASE_URL}/contract/insertOper/${operNo}`,
+      method: "post",
+      data: operate,
+      ...getAuthConfig(),
+    });
+  },
+
+  //单独更新工程师
+  updateOper(operates) {
+    return request({
+      url: `${BASE_URL}/contract/updateOper`,
+      method: "put",
+      data: operates,
+      ...getAuthConfig(),
+    });
+  },
+
+  //单独更新合同
+  updateContr(contract) {
+    return request({
+      url: `${BASE_URL}/contract/updateContr`,
+      method: "put",
+      data: contract,
+      ...getAuthConfig(),
+    });
+  },
 };

@@ -35,6 +35,15 @@ export default {
     });
   },
 
+  //查询所有
+  selectAllStaff() {
+    return request({
+      url: `${BASE_URL}/staff/selectAllStaff`,
+      method: "get",
+     ...getAuthConfig(),
+    });
+  },
+
   //删除
   deleteStaffByID(staffId) {
     return request({

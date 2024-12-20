@@ -567,4 +567,33 @@ public class Operate extends OperateKey {
 	public void setOperUpdDt(Date operUpdDt) {
 		this.operUpdDt = operUpdDt;
 	}
+
+	public Operate(String operEngineerNm, String operProjectNm, Integer operPricePer, Integer operPurchasePrice,
+			Date operStartdt, Date operEnddt, String operStatus, Integer operExcessUnitprice,
+			Integer operDeductionUnitprice, String operSettlementUnit, String operUpperLimit, String operLowerLimit,
+			String operRmk, String operCrdUsr, Date operCrdDt, String operUpdUsr, Date operUpdDt) {
+		super();
+		this.operEngineerNm = operEngineerNm;
+		this.operProjectNm = operProjectNm;
+		this.operPricePer = operPricePer;
+		this.operPurchasePrice = operPurchasePrice;
+		this.operStartdt = operStartdt;
+		this.operEnddt = operEnddt;
+		this.operStatus = operStatus;
+		this.operExcessUnitprice = operExcessUnitprice;
+		this.operDeductionUnitprice = operDeductionUnitprice;
+		this.operSettlementUnit = operSettlementUnit;
+		this.operUpperLimit = operUpperLimit;
+		this.operLowerLimit = operLowerLimit;
+		this.operRmk = operRmk;
+		this.operCrdUsr = operCrdUsr;
+		this.operCrdDt = operCrdDt;
+		this.operUpdUsr = operUpdUsr;
+		this.operUpdDt = operUpdDt;
+	}
+
+	public Operate() {
+		super();
+	}
+
 }
