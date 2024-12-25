@@ -37,12 +37,12 @@
               </template>
               <v-list-item prepend-icon="mdi-book-open" title="契約管理" value="business1"
                 @click="handleClick('business1')"></v-list-item>
-              <v-list-item prepend-icon="mdi-message-bookmark" title="商談管理" value="business2"
+              <!-- <v-list-item prepend-icon="mdi-message-bookmark" title="商談管理" value="business2"
                 @click="handleClick('business2')"></v-list-item>
               <v-list-item prepend-icon="mdi-notebook-outline" title="売上管理" value="business3"
                 @click="handleClick('business3')"></v-list-item>
               <v-list-item prepend-icon="mdi-bookmark-check-outline" title="目標管理" value="business4"
-                @click="handleClick('business4')"></v-list-item>
+                @click="handleClick('business4')"></v-list-item> -->
             </v-list-group>
 
             <v-list-group prepend-icon="mdi-book-account" value="manage" no-action>
@@ -53,16 +53,16 @@
                   </template>
                 </v-list-item>
               </template>
-              <v-list-item prepend-icon="mdi-card-account-details" title="経理管理" value="manage1"
+              <v-list-item prepend-icon="mdi-card-account-details" title="請求書" value="manage1"
                 @click="handleClick('manage1')"></v-list-item>
               <v-list-item prepend-icon="mdi-clipboard-account" title="見積書" value="manage2"
                 @click="handleClick('manage2')"></v-list-item>
               <v-list-item prepend-icon="mdi-clipboard-account-outline" title="注文書" value="manage3"
                 @click="handleClick('manage3')"></v-list-item>
-              <v-list-item prepend-icon="mdi-account-cash" title="入金リスト" value="manage4"
+              <!-- <v-list-item prepend-icon="mdi-account-cash" title="入金リスト" value="manage4"
                 @click="handleClick('manage4')"></v-list-item>
               <v-list-item prepend-icon="mdi-account-cash-outline" title="出金リスト" value="manage5"
-                @click="handleClick('manage5')"></v-list-item>
+                @click="handleClick('manage5')"></v-list-item> -->
             </v-list-group>
 
             <v-list-group prepend-icon="mdi-account-multiple" value="user" no-action>
@@ -145,7 +145,7 @@ export default {
           this.$router.push({ name: 'ContrInfoList' });
           break;
         case 'business2':
-          this.$router.push({ name: '' });
+          this.$router.push({ name: 'BillInfoList' });
           break;
         case 'business3':
           this.$router.push({ name: '' });
@@ -154,7 +154,7 @@ export default {
           this.$router.push({ name: '' });
           break;
         case 'manage1':
-          this.$router.push({ name: '' });
+          this.$router.push({ name: 'BillInfoList' });
           break;
         case 'manage2':
           this.$router.push({ name: '' });
