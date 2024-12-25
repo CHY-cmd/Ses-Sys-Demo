@@ -16,4 +16,7 @@ public interface OperateMapper {
 
 	// 单独更新工程师
 	int updateOperateByOperNo(List<Operate> operates);
+
+	// 删除多余工程师
+	int deleteOperatesNotInListById(List<Operate> operates);
 }

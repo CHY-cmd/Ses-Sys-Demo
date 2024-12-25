@@ -16,6 +16,8 @@ import StaffInfoDetail from '../views/StaffInfoDetail.vue'
 import ContrInfoList from '../views/ContrInfoList.vue'
 import ContrSesAdd from '../views/ContrSesAdd.vue'
 import ContrSesDetail from '../views/ContrSesDetail.vue'
+import ContrCrtAdd from '../views/ContrCrtAdd.vue'
+import ContrCrtDetail from '../views/ContrCrtDetail.vue'
 
 const routes = [
   { path: '/', redirect: '/Login' },
@@ -132,6 +134,24 @@ const routes = [
     path: '/ContrSesDetail/:contrNo',
     name: 'ContrSesDetail',
     component: ContrSesDetail,
+    meta: { requiresAuth: true, title: '営業管理—契約情報詳細'  }
+  },
+  {
+    path: '/ContrCrtAdd',
+    name: 'ContrCrtAdd',
+    component: ContrCrtAdd,
+    meta: { requiresAuth: true, title: '営業管理—契約情報管理'  }
+  },
+  {
+    path: '/ContrCrtAdd/:contrNo',
+    name: 'ContrCrtEdit',
+    component: ContrCrtAdd,
+    meta: { requiresAuth: true, title: '営業管理—契約情報管理'  }
+  },
+  {
+    path: '/ContrCrtDetail/:contrNo',
+    name: 'ContrCrtDetail',
+    component: ContrCrtDetail,
     meta: { requiresAuth: true, title: '営業管理—契約情報詳細'  }
   },
 ]

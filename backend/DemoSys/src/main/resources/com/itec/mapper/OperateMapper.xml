@@ -41,38 +41,42 @@
   
   <!--新增工程师-->
   <insert id="insertOper" parameterType="java.util.List">
-    INSERT INTO M_OPERATE_TBL (OPER_ID, OPER_NO, OPER_ENGINEER_NM, OPER_PROJECT_NM, OPER_PRICE_PER, OPER_PURCHASE_PRICE, 
-    OPER_STARTDT, OPER_ENDDT, OPER_STATUS, OPER_EXCESS_UNITPRICE, OPER_DEDUCTION_UNITPRICE, 
-    OPER_SETTLEMENT_UNIT, OPER_UPPER_LIMIT, OPER_LOWER_LIMIT, OPER_RMK, OPER_CRD_USR, 
-    OPER_CRD_DT, OPER_UPD_USR, OPER_UPD_DT)
+    INSERT INTO M_OPERATE_TBL (
+        OPER_ID, OPER_NO, OPER_ENGINEER_NM, OPER_PROJECT_NM, OPER_PRICE_PER, 
+        OPER_PURCHASE_PRICE, OPER_STARTDT, OPER_ENDDT, OPER_STATUS, OPER_EXCESS_UNITPRICE, 
+        OPER_DEDUCTION_UNITPRICE, OPER_SETTLEMENT_UNIT, OPER_UPPER_LIMIT, OPER_LOWER_LIMIT, 
+        OPER_RMK, OPER_CRD_USR, OPER_CRD_DT, OPER_UPD_USR, OPER_UPD_DT
+    )
     VALUES
     <foreach collection="list" item="item" separator=",">
-        (#{item.operId, jdbcType=BIGINT}, 
-         #{item.operNo, jdbcType=VARCHAR}, 
-         #{item.operEngineerNm, jdbcType=VARCHAR}, 
-         #{item.operProjectNm, jdbcType=VARCHAR}, 
-         #{item.operPricePer, jdbcType=INTEGER}, 
-         #{item.operPurchasePrice, jdbcType=INTEGER}, 
-         #{item.operStartdt, jdbcType=TIMESTAMP}, 
-         #{item.operEnddt, jdbcType=TIMESTAMP}, 
-         #{item.operStatus, jdbcType=VARCHAR}, 
-         #{item.operExcessUnitprice, jdbcType=INTEGER}, 
-         #{item.operDeductionUnitprice, jdbcType=INTEGER}, 
-         #{item.operSettlementUnit, jdbcType=VARCHAR}),
-         #{item.operUpperLimit, jdbcType=VARCHAR}, 
-         #{item.operLowerLimit, jdbcType=VARCHAR}, 
-         #{item.operRmk, jdbcType=VARCHAR}, 
-         #{item.operCrdUsr, jdbcType=VARCHAR}, 
-         #{item.operCrdDt, jdbcType=TIMESTAMP}),
-          #{item.operUpdUsr, jdbcType=VARCHAR}, 
-         #{item.operUpdDt, jdbcType=TIMESTAMP})
+        (
+            #{item.operId, jdbcType=BIGINT}, 
+            #{item.operNo, jdbcType=VARCHAR}, 
+            #{item.operEngineerNm, jdbcType=VARCHAR}, 
+            #{item.operProjectNm, jdbcType=VARCHAR}, 
+            #{item.operPricePer, jdbcType=INTEGER}, 
+            #{item.operPurchasePrice, jdbcType=INTEGER}, 
+            #{item.operStartdt, jdbcType=TIMESTAMP}, 
+            #{item.operEnddt, jdbcType=TIMESTAMP}, 
+            #{item.operStatus, jdbcType=VARCHAR}, 
+            #{item.operExcessUnitprice, jdbcType=INTEGER}, 
+            #{item.operDeductionUnitprice, jdbcType=INTEGER}, 
+            #{item.operSettlementUnit, jdbcType=VARCHAR}, 
+            #{item.operUpperLimit, jdbcType=VARCHAR}, 
+            #{item.operLowerLimit, jdbcType=VARCHAR}, 
+            #{item.operRmk, jdbcType=VARCHAR}, 
+            #{item.operCrdUsr, jdbcType=VARCHAR}, 
+            #{item.operCrdDt, jdbcType=TIMESTAMP}, 
+            #{item.operUpdUsr, jdbcType=VARCHAR}, 
+            #{item.operUpdDt, jdbcType=TIMESTAMP}
+        )
     </foreach>
 </insert>
   
   <!--批量更新 如果OPER_ID匹配，则更新字段；如果不匹配，则保持原值不变-->
   <update id="updateOperateByOperNo" parameterType="java.util.List">
     UPDATE M_OPERATE_TBL
-    <set>
+    SET
         OPER_ENGINEER_NM = CASE
             <foreach collection="list" item="item" separator=" ">
                 WHEN OPER_ID = #{item.operId, jdbcType=BIGINT} THEN #{item.operEngineerNm, jdbcType=VARCHAR}
@@ -175,9 +179,17 @@
             </foreach>
             ELSE OPER_UPD_DT
         END
-    </set>
     WHERE OPER_NO = #{list[0].operNo, jdbcType=VARCHAR}
 </update>
+
+<!--删除多余-->
+<delete id="deleteOperatesNotInListById" parameterType="java.util.List">
+     DELETE FROM M_OPERATE_TBL
+    WHERE OPER_NO = #{operNo, jdbcType=VARCHAR}
+    AND OPER_ID = #{operId, jdbcType=BIGINT}
+</delete>
+
+
   <insert id="insert" parameterType="com.itec.pojo.Operate">
     <!--
       WARNING - @mbg.generated

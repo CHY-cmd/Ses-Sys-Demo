@@ -66,18 +66,6 @@
                                     style="background-color:rgb(217, 217, 217);"><span>契約ステータス</span></v-col>
                                 <v-col cols="6"><span>{{ contrStatusMap[contrOperRequest.contract.contrStatus] }}</span></v-col>
                             </v-row>
-                            <v-row>
-                                <v-col cols="3" style="background-color:rgb(217, 217, 217);"><span>基準時間</span></v-col>
-                                <v-col cols="1"><span>{{ contrOperRequest.contract.contrLowerLimit }}</span></v-col>
-                                <span style="font-size: x-large;align-content: center;">~</span>
-                                <v-col cols="1"><span>{{ contrOperRequest.contract.contrUpperLimit }}</span></v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col cols="3" style="background-color:rgb(217, 217, 217);"><span>入金日</span></v-col>
-                                <v-col cols="1"><span>{{ custList.custGetdt }}</span></v-col>
-                                <span style="font-size: x-large;align-content: center;"></span>
-                                <v-col cols="1"><span>{{ custList.custGetcdt }}</span></v-col>
-                            </v-row>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -98,34 +86,18 @@
                     <thead>
                         <tr style="height: 50px; margin-bottom: 15px;">
                             <th>No.</th>
-                            <th class="custom-tb">技術者名</th>
-                            <th class="custom-tb">契約単価</th>
-                            <th class="custom-tb">仕入単価</th>
-                            <th class="custom-tb">稼働開始日</th>
-                            <th class="custom-tb">稼働ステータス</th>
-                            <th class="custom-tb">下限（H）</th>
-                            <th class="custom-tb">上限（H）</th>
-                            <th class="custom-tb">精算方法</th>
-                            <th class="custom-tb">控除単価</th>
-                            <th class="custom-tb">超過単価</th>
-                            <th class="custom-tb">備考</th>
+                            <th style="text-align: center;">作業明細</th>
+                            <th style="text-align: center;">契約単価</th>
+                            <th style="text-align: center;">備考</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(row, index) in contrOperRequest.operates" :key="index">
                             <td>{{ index + 1 }}</td>
-                            <td><span>{{ row.operEngineerNm }}</span></td>
-                            <td><span>{{ row.operPricePer }}</span></td>
-                            <td><span>{{ row.operPurchasePrice }}</span></td>
-                            <td><span>{{ row.formattedOperStartdt }}</span></td>
-                            <td><span>{{ operStatusMap[row.operStatus] }}</span></td>
-                            <td><span>{{ row.operLowerLimit }}</span></td>
-                            <td><span>{{ row.operUpperLimit }}</span></td>
-                            <td><span>{{ operSettlementMap[row.operSettlementUnit] }}</span></td>
-                            <td><span>{{ row.operDeductionUnitprice }}</span></td>
-                            <td><span>{{ row.operExcessUnitprice }}</span></td>
-                            <td><span>{{ row.operRmk }}</span></td>
+                            <td style="text-align: center;"><span>{{ row.operProjectNm }}</span></td>
+                            <td style="text-align: center;"><span>{{ row.operPricePer }}</span></td>
+                            <td style="text-align: center;"><span>{{ row.operRmk }}</span></td>
                         </tr>
                     </tbody>
                 </v-table>
@@ -158,7 +130,7 @@ import ContractApi from "@/api/Contract";
 import moment from 'moment';
 
 export default {
-    name: 'ContrSesDetail',
+    name: 'ContrCrtDetail',
     components: {
         NavigationDrawer
     },
@@ -176,7 +148,7 @@ export default {
                     contrCrdUsr: this.$store.state.username, contrUpdUsr: this.$store.state.username, contrCrdDt: null, contrUpdDt: null,
                 },
                 operates: [{
-                    operEngineerNm: '', operPricePer: '', operPurchasePrice: '', operStartdt: null, operEnddt: null, operStatus: '',
+                    operProjectNm: '',operEngineerNm: '', operPricePer: '', operPurchasePrice: '', operStartdt: null, operEnddt: null, operStatus: '',
                     operExcessUnitprice: '', operDeductionUnitprice: '', operSettlementUnit: '', operUpperLimit: '', operLowerLimit: '', operRmk: '',
                     operCrdUsr: this.$store.state.username, operUpdUsr: this.$store.state.username, operCrdDt: null, operUpdDt: null, isNew: false, operNo: '', menuOperStartdt: false, formattedOperStartdt: ''
                 }],
@@ -194,14 +166,6 @@ export default {
                 { title: '入金日', key: 'custGetdt', sortable: true },
                 { title: '入金日', key: 'custGetcdt', sortable: true }
             ],
-            staffHeaders: [
-                { title: '選択', sortable: false },
-                { title: '氏名', key: 'staffNm', sortable: true },
-                { title: '性別：', key: 'staffSex', sortable: true },
-                { title: 'スタッフ区分', key: 'staffCls', sortable: true },
-                { title: '最寄駅', key: 'staffNeareststation', sortable: true },
-                { title: '営業ステータス', key: 'staffSalesstatus', sortable: true },
-            ],
             formattedDates: {
                 date1: '', date2: ''
             },
@@ -209,20 +173,8 @@ export default {
             contrStatusMap: {
                 1: '契約中',
                 2: '契約終了',
-                3: '契約予定',
             },
-            operStatusMap: {
-                1: '稼働中',
-                2: '稼働予定',
-                3: '終了予定',
-                4: '契約終了',
-            },
-            operSettlementMap: {
-                1: '切捨て(10円)',
-                2: '切捨て(100円)',
-                3: '切上げ(10円)',
-                4: '切上げ(100円)',
-            },
+
         }
     },
     computed: {
@@ -336,7 +288,7 @@ export default {
         },
         toUpdate() {
             const contrNo = this.$route.params.contrNo;
-            this.$router.push({ path: `/ContrSesAdd/${contrNo}` });
+            this.$router.push({ path: `/ContrCrtAdd/${contrNo}`});
         }
     }
 };
@@ -385,20 +337,4 @@ export default {
     box-shadow: 2px 2px 2px rgba(62, 62, 62, 0.2);
 }
 
-.custom-tb {
-    text-align: center !important;
-    width: 200px;
-    /* 设置输入框的固定宽度 */
-    min-width: 200px;
-    /* 最小宽度也是200px，防止缩小 */
-    max-width: 200px;
-    /* 最大宽度也是200px，防止扩大 */
-    box-sizing: border-box;
-    /* 边框和内边距包含在宽度内 */
-    white-space: nowrap;
-}
-
-td {
-    text-align: center !important;
-}
 </style>

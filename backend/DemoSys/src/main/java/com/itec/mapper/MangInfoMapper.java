@@ -21,4 +21,7 @@ public interface MangInfoMapper {
 	// 更新经理表
 	int updateMangByCustId(@Param("list") List<MangInfo> mangInfos);
 
+	// 单独删除
+	int deleteMangNotInListById(List<MangInfo> mangInfos);
+
 }

@@ -88,7 +88,8 @@
         m.CONTR_STATUS, 
         m.CONTR_STARTDT, 
         m.CONTR_RMK, 
-        m.CONTR_CRD_USR
+        m.CONTR_CRD_USR, 
+        m.QUOT_DELFLG
     FROM 
         cust_tbl c 
     JOIN 

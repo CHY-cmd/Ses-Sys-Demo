@@ -505,7 +505,7 @@ export default {
     components: {
         NavigationDrawer
     },
-    data()  {
+    data() {
         return {
             custMangRequest: {
                 custInfo: {
@@ -514,10 +514,12 @@ export default {
                     custAnnualsale: '', custCompanyrep: '', custRmk1: '', custRmk2: '', custClosedt: '', custPaydt: '', custOrderdt: '', custGetdt: '', custGetcdt: '',
                     custOrdergdt: '', bankCd: '', bankChrcd: '', custBankNm: '',
                     custBranchNm: '', custDeposittype: '', custBranchcd: '', custAccountno: '', custNominee: '',
-                    custCrdUsr: this.$store.state.username, custUpdUsr:this.$store.state.username, custCrdDt: new Date(), custUpdDt: new Date(),
+                    custCrdUsr: this.$store.state.username, custUpdUsr: this.$store.state.username, custCrdDt: new Date(), custUpdDt: new Date(),
                 },
-                mangInfo: [{ managerNm: '', managerPno: '', managerMail: '', managerJob: '', managerRmk: '', 
-                managerCrdUsr: this.$store.state.username, managerUpdUsr: this.$store.state.username, isNew: false, managerCustId: '' }],
+                mangInfo: [{
+                    managerNm: '', managerPno: '', managerMail: '', managerJob: '', managerRmk: '',
+                    managerCrdUsr: this.$store.state.username, managerUpdUsr: this.$store.state.username, isNew: false, managerCustId: ''
+                }],
             },
             banks: [],
             custBank: [],
@@ -561,325 +563,325 @@ export default {
             return this.$store.state.username;
         },
     },
-        watch: {
-            //监听顾客类型选项
-            'custMangRequest.custInfo.custType'(newVal) {
-                if (newVal === '顧客') {
-                    console.log('custBank', this.custBank);
-                    this.handleCustSelected()
-                    this.showGetRow = true;
-                    this.showPayRow = false;
-                } else if (newVal === 'パートナー') {
-                    this.handleOptionPartnerSelected();
-                    this.showGetRow = false;
-                    this.showPayRow = true;
-                    this.showBankBtn = false;
-                } else if (newVal === '顧客&パートナー') {
-                    this.handleOptionPartnerSelected()
-                    this.showGetRow = true;
-                    this.showPayRow = false;
-                    this.showPayArea = true;
-                    this.showPayRow2 = true;
-                    this.showBankBtn = true;
-                    this.showBankBtn2 = false;
-                };
-            },
-            //转为后端可接收类型
-            'this.custMangRequest.custInfo.custStartdt'(newVal) {
-                this.custMangRequest.custInfo.custStartdt.toISOString();
-            },
-            //监听收付选项
-            'custMangRequest.custInfo.custGetcdt'(newVal) {
-                if (newVal === ' ') {
-                    this.showGet = true
-                } else {
-                    this.showGet = false
-                }
-            },
-            'custMangRequest.custInfo.custClosedt'(newVal) {
-                if (newVal === ' ') {
-                    this.showPay = true
-                } else {
-                    this.showPay = false
-                }
-            },
-
-            'custMangRequest.mangInfo': {
-                handler(newVal) {
-                    newVal.forEach(row => {
-                        row.managerCrdUsr = this.$store.state.username;
-                        row.managerUpdUsr = this.$store.state.username;
-                    });
-                },
-                deep: true
+    watch: {
+        //监听顾客类型选项
+        'custMangRequest.custInfo.custType'(newVal) {
+            if (newVal === '顧客') {
+                console.log('custBank', this.custBank);
+                this.handleCustSelected()
+                this.showGetRow = true;
+                this.showPayRow = false;
+            } else if (newVal === 'パートナー') {
+                this.handleOptionPartnerSelected();
+                this.showGetRow = false;
+                this.showPayRow = true;
+                this.showBankBtn = false;
+            } else if (newVal === '顧客&パートナー') {
+                this.handleOptionPartnerSelected()
+                this.showGetRow = true;
+                this.showPayRow = false;
+                this.showPayArea = true;
+                this.showPayRow2 = true;
+                this.showBankBtn = true;
+                this.showBankBtn2 = false;
+            };
+        },
+        //转为后端可接收类型
+        'this.custMangRequest.custInfo.custStartdt'(newVal) {
+            this.custMangRequest.custInfo.custStartdt.toISOString();
+        },
+        //监听收付选项
+        'custMangRequest.custInfo.custGetcdt'(newVal) {
+            if (newVal === ' ') {
+                this.showGet = true
+            } else {
+                this.showGet = false
+            }
+        },
+        'custMangRequest.custInfo.custClosedt'(newVal) {
+            if (newVal === ' ') {
+                this.showPay = true
+            } else {
+                this.showPay = false
             }
         },
 
-        mounted() {
-            this.selectDetailByCustId(this.$route.params.custId);
-            console.log('Mounted component with managerCustId:', this.$route.params.custId);
+        'custMangRequest.mangInfo': {
+            handler(newVal) {
+                newVal.forEach(row => {
+                    row.managerCrdUsr = this.$store.state.username;
+                    row.managerUpdUsr = this.$store.state.username;
+                });
+            },
+            deep: true
+        }
+    },
+
+    mounted() {
+        this.selectDetailByCustId(this.$route.params.custId);
+        console.log('Mounted component with managerCustId:', this.$route.params.custId);
+    },
+
+    created() {
+        this.selectDetailByCustId(this.$route.params.custId);
+        this.selectCustBank();
+    },
+
+    methods: {
+        //通过id查询并回显
+        async selectDetailByCustId(custId) {
+            const response = await CustinfoAddApi.selectDetailByCustId(this.$route.params.custId);
+            if (response.data.items.length > 0) {
+                this.custMangRequest = { ...response.data.items[0], mangInfo: [] };//建立对象结构，所有属性与items相同，并添加一个mangInfo
+                response.data.items.forEach(item => {
+                    this.custMangRequest.mangInfo.push(...item.mangInfo);//遍历数据放入item，再从item中提取mangInfo（同时展开其结构属性）并push到custMangRequest.mangInfo
+                });
+                if (this.custMangRequest.custInfo.custStartdt) {
+                    const dateObj = new Date(this.custMangRequest.custInfo.custStartdt);
+                    if (!isNaN(dateObj.getTime())) {//gettime返回一个时间，判断是否isNaN
+                        this.custMangRequest.custInfo.custStartdt = dateObj;
+                        this.formattedDate = this.formatDate(dateObj);
+                    } else {
+                        console.error('date error', this.custMangRequest.custInfo.custStartdt);
+                    }
+                }
+            }
         },
 
-        created() {
-            this.selectDetailByCustId(this.$route.params.custId);
-            this.selectCustBank();
+        //判断登录按钮更新or新增
+        async insertOrUpdate() {
+            if (this.$route.params.custId) {
+                try {
+                    await this.updateCust();
+                    await this.savaMang();
+                    this.snackbar.show = true;
+                    this.snackbar.message = '更新成功';
+                    this.snackbar.color = 'success';
+                } catch (error) {
+                    this.snackbar.show = true;
+                    this.snackbar.message = '更新エラー';
+                    this.snackbar.color = 'error';
+                }
+                window.location.reload();
+            } else {
+                try {
+                    await this.insertCustMang();
+                    this.snackbar.show = true;
+                    this.snackbar.message = '登録成功';
+                    this.snackbar.color = 'success';
+                } catch (error) {
+                    this.snackbar.show = true;
+                    this.snackbar.message = '登録エラー';
+                    this.snackbar.color = 'error';
+                }
+                window.location.reload();
+            }
         },
 
-        methods: {
-            //通过id查询并回显
-            async selectDetailByCustId(custId) {
-                const response = await CustinfoAddApi.selectDetailByCustId(this.$route.params.custId);
-                if (response.data.items.length > 0) {
-                    this.custMangRequest = { ...response.data.items[0], mangInfo: [] };//建立对象结构，所有属性与items相同，并添加一个mangInfo
-                    response.data.items.forEach(item => {
-                        this.custMangRequest.mangInfo.push(...item.mangInfo);//遍历数据放入item，再从item中提取mangInfo（同时展开其结构属性）并push到custMangRequest.mangInfo
-                    });
-                    if (this.custMangRequest.custInfo.custStartdt) {
-                        const dateObj = new Date(this.custMangRequest.custInfo.custStartdt);
-                        if (!isNaN(dateObj.getTime())) {//gettime返回一个时间，判断是否isNaN
-                            this.custMangRequest.custInfo.custStartdt = dateObj;
-                            this.formattedDate = this.formatDate(dateObj);
-                        } else {
-                            console.error('date error', this.custMangRequest.custInfo.custStartdt);
-                        }
-                    }
-                }
-            },
+        //同时新增两表
+        async insertCustMang() {
+            await CustinfoAddApi.insertCustMang(this.custMangRequest)
+        },
 
-            //判断登录按钮更新or新增
-            insertOrUpdate() {
-                if (this.$route.params.custId) {
-                    try {
-                        this.updateCust();
-                        this.savaMang();
-                        this.snackbar.show = true;
-                        this.snackbar.message = '更新成功';
-                        this.snackbar.color = 'success';
-                        location.reload()
-                    } catch (error) {
-                        this.snackbar.show = true;
-                        this.snackbar.message = '更新エラー';
-                        this.snackbar.color = 'error';
-                    }
-                } else {
-                    try {
-                        this.insertCustMang();
-                        this.snackbar.show = true;
-                        this.snackbar.message = '登録成功';
-                        this.snackbar.color = 'success';
-                        location.reload()
-                    } catch (error) {
-                        this.snackbar.show = true;
-                        this.snackbar.message = '登録エラー';
-                        this.snackbar.color = 'error';
-                    }
-                }
-            },
+        //单独更新客户表
+        async updateCust() {
+            await CustinfoAddApi.updateCust(this.custMangRequest.custInfo)
+        },
 
-            //同时新增两表
-            insertCustMang() {
-                CustinfoAddApi.insertCustMang(this.custMangRequest)
-            },
+        //根据增减行判断经理部分增行新增修改
+        async savaMang() {
+            const updateMangRows = this.custMangRequest.mangInfo.filter(row => !row.isNew);
+            const newMangRows = this.custMangRequest.mangInfo.filter(row => row.isNew);
+            const managerCustId = this.$route.params.custId;
 
-            //单独更新客户表
-            updateCust() {
-                CustinfoAddApi.updateCust(this.custMangRequest.custInfo)
-            },
+            if (updateMangRows.length > 0) {
+                await this.updateMang(updateMangRows);
+            }
+            if (newMangRows.length > 0) {
+                newMangRows.forEach(row => { row.managerCustId = managerCustId; });
+                await this.insertMang(managerCustId, newMangRows);
+            }
+        },
 
-            //根据增减行判断经理部分增行新增修改
-            savaMang() {
-                const updateMangRows = this.custMangRequest.mangInfo.filter(row => !row.isNew);
-                const newMangRows = this.custMangRequest.mangInfo.filter(row => row.isNew);
-                const managerCustId = this.$route.params.custId;
-
-                if (updateMangRows.length > 0) {
-                    this.updateMang(updateMangRows);
-                }
-                if (newMangRows.length > 0) {
-                    newMangRows.forEach(row => { row.managerCustId = managerCustId; });
-                    this.insertMang(managerCustId, newMangRows);
-                }
-            },
-
-            //经理单独新增
-            insertMang(managerCustId, newMangRows) {
-                CustinfoAddApi.insertMang(managerCustId, newMangRows)
-                    .then(response => {
-                        newMangRows.forEach(row => row.isNew = false);
-                        console.log('insertMang success', response);
-                    })
-                    .catch(error => {
-                        console.error('insertMang error', error);
-                    });
-            },
-
-
-            //经理单独更新
-            updateMang() {
-                CustinfoAddApi.updateMang(this.custMangRequest.mangInfo).then(response => {
-                    console.log('updateMang success', response);
+        //经理单独新增
+        async insertMang(managerCustId, newMangRows) {
+            await CustinfoAddApi.insertMang(managerCustId, newMangRows)
+                .then(response => {
+                    newMangRows.forEach(row => row.isNew = false);
+                    console.log('insertMang success', response);
                 })
-                    .catch(error => {
-                        console.error('updateMang error', error);
-                    });
-            },
+                .catch(error => {
+                    console.error('insertMang error', error);
+                });
+        },
 
-            //查询银行
-            selectBank() {
-                CustinfoAddApi.selectBank().then(response => { this.banks = response.data.items }).catch(error => { console.log(error) });
-            },
 
-            //查询客户银行
-            selectCustBank() {
-                CustinfoAddApi.selectCustBank().then(response => { this.custBank = response.data.items }).catch(error => { console.log(error) });
-            },
+        //经理单独更新
+        async updateMang() {
+            await CustinfoAddApi.updateMang(this.custMangRequest.mangInfo).then(response => {
+                console.log('updateMang success', response);
+            })
+                .catch(error => {
+                    console.error('updateMang error', error);
+                });
+        },
 
-            //快速填充银行信息
-            fillBank(rowData) {
-                this.custMangRequest.custInfo.bankCd = rowData.bankCd;
-                this.custMangRequest.custInfo.bankChrcd = rowData.bankChrcd;
-                this.custMangRequest.custInfo.custBankNm = rowData.custBankNm;
-                this.custMangRequest.custInfo.custBranchcd = rowData.custBranchcd;
-                this.custMangRequest.custInfo.custBranchNm = rowData.custBranchNm;
-                this.custMangRequest.custInfo.custAccountno = rowData.custAccountno;
-                this.custMangRequest.custInfo.custNominee = rowData.custNominee;
-                this.custMangRequest.custInfo.custDeposittype = rowData.custDeposittype;
-                this.openBankDialog = false;
-            },
+        //查询银行
+        selectBank() {
+            CustinfoAddApi.selectBank().then(response => { this.banks = response.data.items }).catch(error => { console.log(error) });
+        },
 
-            //担当者增减行并标记
-            addRow() {
-                this.custMangRequest.mangInfo.push({
+        //查询客户银行
+        selectCustBank() {
+            CustinfoAddApi.selectCustBank().then(response => { this.custBank = response.data.items }).catch(error => { console.log(error) });
+        },
+
+        //快速填充银行信息
+        fillBank(rowData) {
+            this.custMangRequest.custInfo.bankCd = rowData.bankCd;
+            this.custMangRequest.custInfo.bankChrcd = rowData.bankChrcd;
+            this.custMangRequest.custInfo.custBankNm = rowData.custBankNm;
+            this.custMangRequest.custInfo.custBranchcd = rowData.custBranchcd;
+            this.custMangRequest.custInfo.custBranchNm = rowData.custBranchNm;
+            this.custMangRequest.custInfo.custAccountno = rowData.custAccountno;
+            this.custMangRequest.custInfo.custNominee = rowData.custNominee;
+            this.custMangRequest.custInfo.custDeposittype = rowData.custDeposittype;
+            this.openBankDialog = false;
+        },
+
+        //担当者增减行并标记
+        addRow() {
+            this.custMangRequest.mangInfo.push({
+                managerNm: '',
+                managerPno: '',
+                managerMail: '',
+                managerJob: '',
+                managerRmk: '',
+                isNew: true
+            });
+        },
+        delRow(index) {
+            if (this.custMangRequest.mangInfo.length > 1) {
+                this.custMangRequest.mangInfo.splice(index, 1);//删除index位置的1个元素
+            } else {
+                this.custMangRequest.mangInfo[0] = {
                     managerNm: '',
                     managerPno: '',
                     managerMail: '',
                     managerJob: '',
                     managerRmk: '',
                     isNew: true
-                });
-            },
-            delRow(index) {
-                if (this.custMangRequest.mangInfo.length > 1) {
-                    this.custMangRequest.mangInfo.splice(index, 1);//删除index位置的1个元素
-                } else {
-                    this.custMangRequest.mangInfo[0] = {
-                        managerNm: '',
-                        managerPno: '',
-                        managerMail: '',
-                        managerJob: '',
-                        managerRmk: '',
-                        isNew: true
-                    };
-                }
-            },
-
-            //格式化手机号
-            formatPhoneNumber(event) {
-                let phoneNumber = event.target.value.replace(/\D/g, '');
-                if (phoneNumber.length === 9) {
-                    phoneNumber = phoneNumber.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3');
-                } else if (phoneNumber.length === 10) {
-                    phoneNumber = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-                } else if (phoneNumber.length === 11) {
-                    phoneNumber = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-                }
-                event.target.value = phoneNumber;
-            },
-            blurPhone(event) {
-                let phoneNumber = event.target.value.replace(/\D/g, '');
-                if (phoneNumber.length < 9 || phoneNumber.length > 11) {
-                    alert("電話番号の形式が正しくありません");
-                }
-            },
-
-            //格式化传真号
-            formatFaxNumber(event) {
-                let faxNumber = event.target.value.replace(/\D/g, '');
-                if (faxNumber.length === 10) {
-                    faxNumber = faxNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-                }
-                event.target.value = faxNumber;
-            },
-            blurFax(event) {
-                let faxNumber = event.target.value.replace(/\D/g, '');
-                if (faxNumber.length === !10) {
-                    alert("FAXの形式が正しくありません");
-                }
-            },
-
-            //格式化金额
-            formatCustMoney() {
-                let amount = this.custMangRequest.custInfo.custMoney.replace(/\D/g, '');
-                this.custMangRequest.custInfo.custMoney = amount.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-            },
-
-            //控制日历
-            toggleMenu(date) {
-
-                date = new Date(date);
-
-                this.menu = !this.menu;
-            },
-
-            //格式化日期
-            formatDate(date) {
-                let dateObj;
-                if (date instanceof Date) {
-                    dateObj = date;
-                }
-                else {
-                    dateObj = new Date(date);
-                }
-                if (isNaN(dateObj.getTime())) {
-                    return '';
-                }
-                const year = dateObj.getFullYear();
-                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-                const day = String(dateObj.getDate()).padStart(2, '0');
-                const formattedDate = `${year}-${month}-${day}`;
-                return formattedDate
-            },
-            handleDateInput(selectedDate) {
-                if (selectedDate instanceof Date && !isNaN(selectedDate.getTime())) {
-                    this.formattedDate = this.formatDate(selectedDate);
-                } else {
-                    this.formattedDate = '';
-                }
-            },
-
-            //选顾客时调用
-            handleCustSelected() {
-                console.log('custBankNm', this.custMangRequest.custInfo.custBankNm)
-                this.custMangRequest.custInfo.custBankNm = this.custBank.custBankNm;
-                this.custMangRequest.custInfo.custBranchNm = this.custBank.custBranchNm;
-                this.custMangRequest.custInfo.custDeposittype = this.custBank.custDeposittype;
-                this.custMangRequest.custInfo.custAccountno = this.custBank.custAccountno;
-                this.custMangRequest.custInfo.custNominee = this.custBank.custNominee;
-                this.custMangRequest.custInfo.custBranchcd = this.custBank.custBranchcd;
-            },
-
-            //打开银行页面同时查询
-            openBank() {
-                this.openBankDialog = true;
-                this.selectBank();
-            },
-
-            handleOptionPartnerSelected() {
-                this.custMangRequest.custInfo.custBankNm = '';
-                this.custMangRequest.custInfo.custBranchcd = '';
-                this.custMangRequest.custInfo.custBranchNm = '';
-                this.custMangRequest.custInfo.custAccountno = '';
-                this.custMangRequest.custInfo.custDeposittype = '';
-                this.custMangRequest.custInfo.custNominee = '';
-            },
-
-            //路由
-            toList() {
-                this.$router.push('/CustInfoList');
+                };
             }
-
         },
-    }
+
+        //格式化手机号
+        formatPhoneNumber(event) {
+            let phoneNumber = event.target.value.replace(/\D/g, '');
+            if (phoneNumber.length === 9) {
+                phoneNumber = phoneNumber.replace(/(\d{2})(\d{3})(\d{4})/, '$1-$2-$3');
+            } else if (phoneNumber.length === 10) {
+                phoneNumber = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+            } else if (phoneNumber.length === 11) {
+                phoneNumber = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+            }
+            event.target.value = phoneNumber;
+        },
+        blurPhone(event) {
+            let phoneNumber = event.target.value.replace(/\D/g, '');
+            if (phoneNumber.length < 9 || phoneNumber.length > 11) {
+                alert("電話番号の形式が正しくありません");
+            }
+        },
+
+        //格式化传真号
+        formatFaxNumber(event) {
+            let faxNumber = event.target.value.replace(/\D/g, '');
+            if (faxNumber.length === 10) {
+                faxNumber = faxNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+            }
+            event.target.value = faxNumber;
+        },
+        blurFax(event) {
+            let faxNumber = event.target.value.replace(/\D/g, '');
+            if (faxNumber.length === !10) {
+                alert("FAXの形式が正しくありません");
+            }
+        },
+
+        //格式化金额
+        formatCustMoney() {
+            let amount = this.custMangRequest.custInfo.custMoney.replace(/\D/g, '');
+            this.custMangRequest.custInfo.custMoney = amount.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        },
+
+        //控制日历
+        toggleMenu(date) {
+
+            date = new Date(date);
+
+            this.menu = !this.menu;
+        },
+
+        //格式化日期
+        formatDate(date) {
+            let dateObj;
+            if (date instanceof Date) {
+                dateObj = date;
+            }
+            else {
+                dateObj = new Date(date);
+            }
+            if (isNaN(dateObj.getTime())) {
+                return '';
+            }
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+            return formattedDate
+        },
+        handleDateInput(selectedDate) {
+            if (selectedDate instanceof Date && !isNaN(selectedDate.getTime())) {
+                this.formattedDate = this.formatDate(selectedDate);
+            } else {
+                this.formattedDate = '';
+            }
+        },
+
+        //选顾客时调用
+        handleCustSelected() {
+            console.log('custBankNm', this.custMangRequest.custInfo.custBankNm)
+            this.custMangRequest.custInfo.custBankNm = this.custBank.custBankNm;
+            this.custMangRequest.custInfo.custBranchNm = this.custBank.custBranchNm;
+            this.custMangRequest.custInfo.custDeposittype = this.custBank.custDeposittype;
+            this.custMangRequest.custInfo.custAccountno = this.custBank.custAccountno;
+            this.custMangRequest.custInfo.custNominee = this.custBank.custNominee;
+            this.custMangRequest.custInfo.custBranchcd = this.custBank.custBranchcd;
+        },
+
+        //打开银行页面同时查询
+        openBank() {
+            this.openBankDialog = true;
+            this.selectBank();
+        },
+
+        handleOptionPartnerSelected() {
+            this.custMangRequest.custInfo.custBankNm = '';
+            this.custMangRequest.custInfo.custBranchcd = '';
+            this.custMangRequest.custInfo.custBranchNm = '';
+            this.custMangRequest.custInfo.custAccountno = '';
+            this.custMangRequest.custInfo.custDeposittype = '';
+            this.custMangRequest.custInfo.custNominee = '';
+        },
+
+        //路由
+        toList() {
+            this.$router.push('/CustInfoList');
+        }
+
+    },
+}
 
 
 </script>

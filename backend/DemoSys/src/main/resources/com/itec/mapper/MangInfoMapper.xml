@@ -104,5 +104,13 @@
     WHERE MANAGER_CUST_ID = #{list[0].managerCustId, jdbcType=VARCHAR}
 </update>
  
+ <!--删除多余-->
+<delete id="deleteMangNotInListById" parameterType="java.util.List">
+    DELETE FROM mang_tbl
+    WHERE MANAGER_CD NOT IN
+    <foreach collection="list" item="item" open="(" separator="," close=")">
+        #{item.managerCd, jdbcType=BIGINT}
+    </foreach>
+</delete>
   
 </mapper>

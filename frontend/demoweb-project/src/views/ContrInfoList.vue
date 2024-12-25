@@ -85,7 +85,7 @@
                         style="display: flex;justify-content: center;align-items: center;background-color: rgb(242, 242, 242);">
                         <v-btn class="btn" @click="selectContrGeneral">検索</v-btn>
                         <v-btn class="btn" @click="toSesAdd">SES新規登録</v-btn>
-                        <v-btn class="btn" @click="">請負新規登録</v-btn>
+                        <v-btn class="btn" @click="toCtrAdd">請負新規登録</v-btn>
                         <v-btn class="btn" @click="reset">リセット</v-btn>
                     </div>
                 </div>
@@ -135,27 +135,33 @@
                                 <!-- 删除编辑修改入口 -->
                                 <td>
                                     <div style="display: flex;margin-top: 5px;margin-bottom: 5px;">
-                                        <router-link :to="'/ContrSesAdd/' + item.contrNo"><v-btn text
-                                                style="width: 70px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255);margin-right: 5px;">編集</v-btn></router-link>
+                                        <v-btn text @click="toEdit(item.contrNo, item.quotDelflg)"
+                                            style="width: 70px;height: 35px;background-color: rgb(189, 215, 238);color: rgb(255, 255, 255);margin-right: 5px;">編集</v-btn>
                                         <v-btn text @click="deleteContrById(item.contrNo)"
                                             style="width: 70px;height: 35px;background-color: rgb(217, 217, 217);color: rgb(255, 255, 255);margin-right: 5px;">削除</v-btn>
                                     </div>
                                 </td>
                                 <td style="text-align: center;">{{ (currentPage - 1) * limit + index + 1 }}</td>
-                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.contrNo }}</td>
-                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.custNm }}</td>
-                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.contrProjectNm
-                                    }}</td>
-                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.contrEngineerNm
-                                    }}</td>
-                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{
+                                <td style="text-align: center;" @click="toDetail(item.contrNo, item.quotDelflg)">{{
+                                    item.contrNo }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo, item.quotDelflg)">{{
+                                    item.custNm }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo, item.quotDelflg)">{{
+                                    item.contrProjectNm
+                                }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo, item.quotDelflg)">{{
+                                    item.contrEngineerNm
+                                }}</td>
+                                <td style="text-align: center;" @click="toDetail(item.contrNo, item.quotDelflg)">{{
                                     getContrtatus(item.contrStatus) }}
                                 </td>
-                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{
+                                <td style="text-align: center;" @click="toDetail(item.contrNo, item.quotDelflg)">{{
                                     formatDate(item.contrStartdt) }}</td>
-                                <td style="text-align: center;" @click="toDetail(item.contrNo)"> {{ item.contrRmk }}
+                                <td style="text-align: center;" @click="toDetail(item.contrNo, item.quotDelflg)"> {{
+                                    item.contrRmk }}
                                 </td>
-                                <td style="text-align: center;" @click="toDetail(item.contrNo)">{{ item.contrCrdUsr }}
+                                <td style="text-align: center;" @click="toDetail(item.contrNo, item.quotDelflg)">{{
+                                    item.contrCrdUsr }}
                                 </td>
                             </tr>
                         </tbody>
@@ -353,9 +359,28 @@ export default {
         toSesAdd() {
             this.$router.push('/ContrSesAdd');
         },
-        toDetail(contrNo) {
-            this.$router.push({ path: `/ContrSesDetail/${contrNo}` });
-        }
+        toDetail(contrNo, quotDelflg) {
+            if (quotDelflg == '1') {
+                this.$router.push({ path: `/ContrSesDetail/${contrNo}` });
+            } else if (quotDelflg == '2') {
+                this.$router.push({ path: `/ContrCrtDetail/${contrNo}` });
+            } else {
+                console.error('Unexpected quotDelflg value:', quotDelflg);
+            }
+        },
+        toEdit(contrNo, quotDelflg) {
+            if (quotDelflg == '1') {
+                this.$router.push({ path: `/ContrSesAdd/${contrNo}` });
+            } else if (quotDelflg == '2') {
+                this.$router.push({ path: `/ContrCrtAdd/${contrNo}` });
+            } else {
+                console.error('Unexpected quotDelflg value:', quotDelflg);
+            }
+        },
+        toCtrAdd() {
+            this.$router.push('/ContrCrtAdd');
+        },
+
     }
 };
 </script>

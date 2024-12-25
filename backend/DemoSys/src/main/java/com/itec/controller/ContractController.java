@@ -112,11 +112,10 @@ public class ContractController {
 		contract.setContrCrdDt(new Date());
 		contract.setContrUpdDt(new Date());
 
-		// 输入多条工程师数据 赋值合同表中的contrNo和contrProjectNm
+		// 输入多条工程师数据 赋值合同表中的contrNo
 		List<Operate> operates = contrOperRequest.getOperates();
 		for (Operate operate : operates) {
 			operate.setOperNo(contract.getContrNo());
-			operate.setOperProjectNm(contract.getContrProjectNm());
 			operate.setOperUpdDt(new Date());
 			operate.setOperCrdDt(new Date());
 		}
