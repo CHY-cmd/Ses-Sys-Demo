@@ -127,4 +127,10 @@ public class CustInfoController {
 	public R selectDetailByCustId(@PathVariable("custId") String custId) {
 		return custMangGeneralServiceImpl.selectDetailByCustId(custId);
 	}
+
+	// 通过客户名查询
+	@GetMapping("/selectCustByNm/{custNm}")
+	public R selectCustByNm(@PathVariable("custNm") String custNm) {
+		return custInfoServiceImpl.selectCustByNm(custNm);
+	}
 }

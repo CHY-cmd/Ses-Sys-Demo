@@ -79,7 +79,7 @@
   
    <!-- 概览查询 小于号转写为&lt;-->
 <select id="selectContrGeneral" resultType="com.itec.pojo.Contract">
-    SELECT 
+    SELECT DISTINCT
     m.CONTR_CUST_ID,
         m.CONTR_NO,
         c.CUST_NM, 
@@ -94,6 +94,8 @@
         cust_tbl c 
     JOIN 
         CONTRACT_TBL m ON c.CUST_ID = m.CONTR_CUST_ID
+    JOIN 
+        M_OPERATE_TBL n ON m.CONTR_NO = n.OPER_NO
     <where>
         <if test="contractQuaryCondition.quotDelflg != null and contractQuaryCondition.quotDelflg !=''">
             AND m.QUOT_DELFLG = #{contractQuaryCondition.quotDelflg}
@@ -101,8 +103,8 @@
         <if test="contractQuaryCondition.custNm != null and contractQuaryCondition.custNm !=''">
             AND c.CUST_NM LIKE CONCAT('%', #{contractQuaryCondition.custNm}, '%')
         </if>
-        <if test="contractQuaryCondition.contrEngineerNm != null and contractQuaryCondition.contrEngineerNm !=''">
-            AND m.CONTR_ENGINEER_NM LIKE CONCAT('%', #{contractQuaryCondition.contrEngineerNm}, '%')
+        <if test="contractQuaryCondition.operEngineerNm != null and contractQuaryCondition.operEngineerNm !=''">
+            AND n.OPER_ENGINEER_NM LIKE CONCAT('%', #{contractQuaryCondition.operEngineerNm}, '%')
         </if>
         <if test="contractQuaryCondition.contrProjectNm != null and contractQuaryCondition.contrProjectNm !=''">
             AND m.CONTR_PROJECT_NM LIKE CONCAT('%', #{contractQuaryCondition.contrProjectNm}, '%')
@@ -127,36 +129,39 @@
 
 <!-- 概览查询条数 -->
 <select id="selectContrGeneralNum" resultType="int">
-    SELECT 
-        COUNT(*) 
+    SELECT
+       COUNT(DISTINCT m.CONTR_NO) as contractCount
     FROM 
         cust_tbl c 
     JOIN 
         CONTRACT_TBL m ON c.CUST_ID = m.CONTR_CUST_ID
+    JOIN 
+        M_OPERATE_TBL n ON m.CONTR_NO = n.OPER_NO
     <where>
         <if test="contractQuaryCondition.quotDelflg != null and contractQuaryCondition.quotDelflg !=''">
-            AND m.QUOT_DELFLG = #{contractQuaryCondition.quotDelflg,jdbcType=VARCHAR}
+            AND m.QUOT_DELFLG = #{contractQuaryCondition.quotDelflg}
         </if>
         <if test="contractQuaryCondition.custNm != null and contractQuaryCondition.custNm !=''">
             AND c.CUST_NM LIKE CONCAT('%', #{contractQuaryCondition.custNm}, '%')
         </if>
-        <if test="contractQuaryCondition.contrEngineerNm != null and contractQuaryCondition.contrEngineerNm !=''">
-            AND m.CONTR_ENGINEER_NM LIKE CONCAT('%', #{contractQuaryCondition.contrEngineerNm}, '%')
+        <if test="contractQuaryCondition.operEngineerNm != null and contractQuaryCondition.operEngineerNm !=''">
+            AND n.OPER_ENGINEER_NM LIKE CONCAT('%', #{contractQuaryCondition.operEngineerNm}, '%')
         </if>
         <if test="contractQuaryCondition.contrProjectNm != null and contractQuaryCondition.contrProjectNm !=''">
             AND m.CONTR_PROJECT_NM LIKE CONCAT('%', #{contractQuaryCondition.contrProjectNm}, '%')
         </if>
         <if test="contractQuaryCondition.contrStatus != null and contractQuaryCondition.contrStatus !=''">
-            AND m.CONTR_STATUS = #{contractQuaryCondition.contrStatus,jdbcType=VARCHAR}
+            AND m.CONTR_STATUS = #{contractQuaryCondition.contrStatus}
         </if>
        <if test="contractQuaryCondition.contrStartdt != null">
-            AND m.CONTR_STARTDT >= #{contractQuaryCondition.contrStartdt,jdbcType=TIMESTAMP}
+            AND m.CONTR_STARTDT >= #{contractQuaryCondition.contrStartdt}
         </if>
         <if test="contractQuaryCondition.contrEnddt != null">
-            AND m.CONTR_ENDDT &lt;= #{contractQuaryCondition.contrEnddt,jdbcType=TIMESTAMP}
+            AND m.CONTR_ENDDT &lt;= #{contractQuaryCondition.contrEnddt}
         </if>
-        AND m.CONTR_DELFLG = 0
+        
     </where>
+     AND m.CONTR_DELFLG = 0
 </select>
 
 <!-- ID查询contr -->
@@ -369,9 +374,6 @@
       <if test="quotDelflg != null">
         QUOT_DELFLG = #{quotDelflg,jdbcType=VARCHAR},
       </if>
-      <if test="contrDelflg != null">
-        CONTR_DELFLG = #{contrDelflg,jdbcType=CHAR},
-      </if>
       <if test="contrStartdt != null">
         CONTR_STARTDT = #{contrStartdt,jdbcType=TIMESTAMP},
       </if>
@@ -427,7 +429,7 @@
         CONTR_UPD_DT = #{contrUpdDt,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where CONTR_NO = #{contrNo,jdbcType=VARCHAR}
+    where CONTR_NO = #{contrNo,jdbcType=VARCHAR} AND CONTR_DELFLG=0
   </update>
   
 </mapper>

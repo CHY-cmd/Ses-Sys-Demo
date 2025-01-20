@@ -18,6 +18,8 @@ import ContrSesAdd from '../views/ContrSesAdd.vue'
 import ContrSesDetail from '../views/ContrSesDetail.vue'
 import ContrCrtAdd from '../views/ContrCrtAdd.vue'
 import ContrCrtDetail from '../views/ContrCrtDetail.vue'
+import BillInfoList from '../views/BillInfoList.vue'
+import BillSesAdd from '../views/BillSesAdd.vue'
 
 const routes = [
   { path: '/', redirect: '/Login' },
@@ -153,6 +155,24 @@ const routes = [
     name: 'ContrCrtDetail',
     component: ContrCrtDetail,
     meta: { requiresAuth: true, title: '営業管理—契約情報詳細'  }
+  },
+  {
+    path: '/BillInfoList',
+    name: 'BillInfoList',
+    component: BillInfoList,
+    meta: { requiresAuth: true, title: '経理管理-請求書一覧'  }
+  },
+  {
+    path: '/BillSesAdd',
+    name: 'BillSesAdd',
+    component: BillSesAdd,
+    meta: { requiresAuth: true, title: '経理管理-請求書情報管理'  }
+  },
+  {
+    path: '/BillSesAdd/:billNo',
+    name: 'BillSesEdit',
+    component: BillSesAdd,
+    meta: { requiresAuth: true, title: '経理管理-請求書情報管理'  }
   },
 ]
 const router = createRouter({

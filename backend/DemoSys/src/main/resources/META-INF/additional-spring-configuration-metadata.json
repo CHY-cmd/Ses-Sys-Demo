@@ -1,5 +1,12 @@
-{"properties": [{
-  "name": "spring.datasource.filters",
-  "type": "java.lang.String",
-  "description": "A description for 'spring.datasource.filters'"
-}]}
+{"properties": [
+  {
+    "name": "spring.datasource.filters",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.datasource.filters'"
+  },
+  {
+    "name": "net.sf.jasperreports.export.pdf.font.embedded",
+    "type": "java.lang.String",
+    "description": "A description for 'net.sf.jasperreports.export.pdf.font.embedded'"
+  }
+]}

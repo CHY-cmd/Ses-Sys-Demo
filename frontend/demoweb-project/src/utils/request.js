@@ -31,6 +31,10 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
+    // 如果 responseType 是 blob 或 arraybuffer，则直接返回原始响应
+    if (response.config.responseType === 'blob' || response.config.responseType === 'arraybuffer') {
+      return response;
+    }
     const res = response.data;
 
     // if the custom code is not 20000, it is judged as an error.

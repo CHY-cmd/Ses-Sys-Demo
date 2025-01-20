@@ -24,4 +24,6 @@ public interface CustInfoService {
 
 	// 更新客户表
 	R updateCustByCustId(CustInfo custInfo);
+
+	R selectCustByNm(String custNm);
 }

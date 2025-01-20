@@ -28,7 +28,7 @@
                                 <v-text-field variant="outlined" bg-color="white"
                                     v-model="contractQuaryCondition.contrProjectNm"></v-text-field>
                                 <v-text-field variant="outlined" bg-color="white"
-                                    v-model="contractQuaryCondition.contrEngineerNm"
+                                    v-model="contractQuaryCondition.operEngineerNm"
                                     :disabled="isEngiDisabled"></v-text-field>
                             </v-col>
                             <v-col>
@@ -202,7 +202,7 @@ export default {
     data() {
         return {
             username: "",
-            contractQuaryCondition: { custNm: '', contrEngineerNm: '', contrProjectNm: '', quotDelflg: '', contrStartdt: null, contrEnddt: null, contrStatus: '' },
+            contractQuaryCondition: { custNm: '', operEngineerNm: '', contrProjectNm: '', quotDelflg: '', contrStartdt: null, contrEnddt: null, contrStatus: '' },
             selectItems: [
                 { title: '契約中', value: '1' },
                 { title: '契約終了', value: '2' },
@@ -241,7 +241,7 @@ export default {
             return Math.ceil(this.totalItems / this.limit);
         },
         isEngiDisabled() {
-            return this.a === "2";
+            return this.contractQuaryCondition.quotDelflg === "2";
         },
     },
     watch: {
@@ -348,7 +348,7 @@ export default {
 
         reset() {
             this.contractQuaryCondition.custNm = '';
-            this.contractQuaryCondition.contrEngineerNm = '';
+            this.contractQuaryCondition.operEngineerNm = '';
             this.contractQuaryCondition.contrProjectNm = '';
             this.contractQuaryCondition.contrStatus = '';
             this.contractQuaryCondition.quotDelflg = '';

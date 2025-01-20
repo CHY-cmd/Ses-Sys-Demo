@@ -45,4 +45,13 @@ selectAllCustInfos(){
   })
 },
 
+//客户名查信息
+selectCustByNm(custNm){
+  return request({
+    url:`http://localhost:8081/details/selectCustByNm/${custNm}`,
+    method:'get',
+    ...getAuthConfig()
+  })
+},
+
 }

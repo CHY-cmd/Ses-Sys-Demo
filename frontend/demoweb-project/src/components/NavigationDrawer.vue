@@ -145,7 +145,7 @@ export default {
           this.$router.push({ name: 'ContrInfoList' });
           break;
         case 'business2':
-          this.$router.push({ name: 'BillInfoList' });
+          this.$router.push({ name: '' });
           break;
         case 'business3':
           this.$router.push({ name: '' });

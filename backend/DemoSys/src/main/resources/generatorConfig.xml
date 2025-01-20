@@ -17,7 +17,7 @@
                              targetPackage="com.itec.mapper"
                              targetProject="src/main/java"/>
 
-        <table tableName="CONTRACT_TBL" domainObjectName="Contract" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
-  <table tableName="M_OPERATE_TBL" domainObjectName="Operate" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
+        <table tableName="BILL_TBL" domainObjectName="Bill" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
+  <table tableName="BILLDETL_TBL" domainObjectName="BillDetl" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
     </context>
 </generatorConfiguration>

@@ -62,4 +62,10 @@ public class CustInfoServiceImpl implements CustInfoService {
 		}
 	}
 
+	@Override
+	public R selectCustByNm(String custNm) {
+		List<CustInfo> selectCustByNm = custInfoMapper.selectCustByNm(custNm);
+		return R.success().data("items", selectCustByNm);
+	}
+
 }

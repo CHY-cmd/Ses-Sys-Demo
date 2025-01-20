@@ -61,7 +61,7 @@
     </resultMap>
     <!-- 概览查询 -->
     <select id="selectGeneral" resultType="com.itec.pojo.CustMangGeneral">
-        SELECT 
+        SELECT DISTINCT
         c.CUST_ID,
             c.CUST_NM, 
             c.CUST_PHONE, 

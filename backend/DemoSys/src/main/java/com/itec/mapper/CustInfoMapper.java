@@ -33,4 +33,7 @@ public interface CustInfoMapper {
 	// 更新客户表
 	int updateCustByCustId(CustInfo custInfo);
 
+	// 客户名查信息
+	@Select("select * from cust_tbl where CUST_DELFLG = 0 and CUST_NM = #{custNm}")
+	List<CustInfo> selectCustByNm(String custNm);
 }

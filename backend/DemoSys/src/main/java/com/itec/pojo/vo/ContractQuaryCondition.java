@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ContractQuaryCondition {
 	private String custNm;
-	private String contrEngineerNm;
+	private String operEngineerNm;
 	private String contrProjectNm;
 	private String quotDelflg;
 	private Date contrStartdt;
@@ -18,7 +18,7 @@ public class ContractQuaryCondition {
 			Date contrStartdt, Date contrEnddt, String contrStatus) {
 		super();
 		this.custNm = custNm;
-		this.contrEngineerNm = contrEngineerNm;
+		this.operEngineerNm = contrEngineerNm;
 		this.contrProjectNm = contrProjectNm;
 		this.quotDelflg = quotDelflg;
 		this.contrStartdt = contrStartdt;
@@ -39,11 +39,11 @@ public class ContractQuaryCondition {
 	}
 
 	public String getContrEngineerNm() {
-		return contrEngineerNm;
+		return operEngineerNm;
 	}
 
-	public void setContrEngineerNm(String contrEngineerNm) {
-		this.contrEngineerNm = contrEngineerNm;
+	public void setOperEngineerNm(String operEngineerNm) {
+		this.operEngineerNm = operEngineerNm;
 	}
 
 	public String getContrProjectNm() {
